@@ -1,0 +1,10 @@
+{
+ // "extends": "@tsconfig/react-native/tsconfig.json", убрал тк была ошибка
+  "compilerOptions": {
+    // "baseUrl": ".",   //добавил
+ 
+    "jsx": "react-native",
+    "moduleResolution": "Node",
+  },
+
+}
