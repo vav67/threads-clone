@@ -174,7 +174,7 @@ const AppStack = () => {
 
    { (loading) ? (
    <>
-       <Text  style={tw`text-black`}> Loading = {pproba} </Text>
+       <Text  style={tw`text-[#f3f3f3]`}> Loading = {pproba} </Text>
        <Text  style={tw`text-black`}> Добавить таймер попыток соединения </Text>
          <Loader />
      </>      

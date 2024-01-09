@@ -122,6 +122,7 @@ exports.createUser = catchAsyncErrors(async (req, res, next) => {
   }
 });
 
+
 // Login User
 exports.loginUser = catchAsyncErrors(async (req, res, next) => {
   const { email, password } = req.body;
@@ -139,19 +140,21 @@ exports.loginUser = catchAsyncErrors(async (req, res, next) => {
 
   if (!user) {
     return next(
-      new ErrorHandler("User is not find with this email & password", 401)
+      new ErrorHandler("User is not find with this email & password", 499)
     );
   }
   const isPasswordMatched = await user.comparePassword(password);
 
   if (!isPasswordMatched) {
     return next(
-      new ErrorHandler("User is not find with this email & password", 401)
+      new ErrorHandler("User is not find with this email & password", 488)
     );
   }
 
   sendToken(user, 201, res);
 });
+
+
 
 //  Log out user
 exports.logoutUser = catchAsyncErrors(async (req, res, next) => {

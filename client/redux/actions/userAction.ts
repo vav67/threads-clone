@@ -122,7 +122,7 @@ export const loadUser = () => async (dispatch: Dispatch<any>) => {
 export const loginUser =
   (email: string, password: string) => async (dispatch: Dispatch<any>) => {
    
-   // console.log( '4  client loginUser email=', email + ' password='+ password )
+    console.log( '4  client loginUser email=', email + ' password='+ password )
 
     try {
       dispatch({    type: 'userLoginRequest',       });
@@ -132,13 +132,13 @@ export const loginUser =
       const config = {headers: {'Content-Type': 'application/json'}};
 
    //можно сделать отправка пароля по эектронной почте
-  // console.log( '4.1 login =', `${URI}/login`)
+   // console.log( '4.1 login =', `${URI}/login`)
       const {data} = await axios.post( `${URI}/login`, 
            {email, password},
         config,
       );
 
-     // console.log( '4   это loginUser data=', data)
+      console.log( '4   это loginUser data=', data)
 
       dispatch({ type: 'userLoginSuccess', payload: data.user, });
 

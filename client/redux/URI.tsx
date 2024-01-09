@@ -23,8 +23,10 @@ let URI = '';
 
   //это интернет
         //    URI = 'https://threads0.vercel.app/api/v1';
+      
+       URI =   'https://threads-clone-h12tixt6q-vav67.vercel.app/api/v1'
  //это локально 
- URI = 'http://192.168.31.85:8000/api/v1';
+//URI = 'http://192.168.31.85:8000/api/v1';
 
 
 export {URI};

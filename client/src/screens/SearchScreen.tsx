@@ -175,7 +175,7 @@ return (
          <Text style = {tw`pl-3 text-4 text-black `}>{item.name}</Text>
          <Text style = {tw`pl-3 text-4 text-black `}>{item.userName}</Text>
          <Text style = {tw`pl-3 mt-1 text-3 text-[#8a8585] `}>
-          {item.followers.length} followers подписчиков</Text>
+          {item.followers?.length} followers подписчиков</Text>
        </View>
        <View>
    <TouchableOpacity
@@ -185,7 +185,7 @@ return (
     >
         <Text style = {tw`text-black  `}>
               {
- item.followers.find( (i: any) => i.userId === user._id, ) ? '+Following' : '+Follow'
+ item.followers?.find( (i: any) => i.userId === user._id, ) ? '+Following' : '+Follow'
           }     
          </Text>
        
