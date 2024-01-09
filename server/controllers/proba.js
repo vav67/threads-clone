@@ -19,8 +19,9 @@ exports.hom = catchAsyncErrors(async (req, res, next) => {
  const useri = await User.find() //все юзеры
     //console.log( 'это проба')
        // res.status(200).json({ message: "Это тестовый маршрут /proba" });
-        res.status(200).json({ message: `${useri.length}- всего  и  V ${VV()}` }); // версия
-      
+  //пока      res.status(200).json({ message: `${useri.length}- всего  и  V ${VV()}` }); // версия
+   const aa = " это версия "    
+        res.status(201).json({  success: true, aa });
      
   
     } catch (error) {
