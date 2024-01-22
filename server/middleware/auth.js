@@ -7,7 +7,7 @@ const connectDb = require("../db/db");
 
 exports.isAuthenticatedUser = catchAsyncErrors(async (req, res, next) => {
   
-  console.log( 'isAuthenticatedUser  проверка соединения'  )
+ // console.log( 'isAuthenticatedUser  проверка соединения'  )
 // здесь добавил
  // Проверка доступа к базе данных
 //  if (!isDatabaseConnected()) {
@@ -20,7 +20,7 @@ exports.isAuthenticatedUser = catchAsyncErrors(async (req, res, next) => {
  await connectDb();
 
   const authHeader = req.headers.authorization;
- console.log( 'isAuthenticatedUser  запрос req.headers=', req.headers )
+// console.log( 'isAuthenticatedUser  запрос req.headers=', req.headers )
 
  //Носитель не определен -  Bearer undefined
 if( !authHeader || authHeader === 'Bearer undefined' || !authHeader.startsWith("Bearer "))

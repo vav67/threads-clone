@@ -6,6 +6,63 @@
   const cloudinary = require("cloudinary");
   const Notification = require("../models/NotificationModel");
 
+  const yesNotifi = "no" //пока нет нотификации
+
+//////////сообщения/////////////////////
+const admin = require( 'firebase-admin')  // добавил
+ const { initializeApp } = require('../firebase'); // Импортируем initializeApp из вашего firebase.ts
+///////////////////////////////////
+
+const soob = async (tokenfirebase, ttitle, bbody, dd ) => {
+
+  try {
+
+    const { ousername , ouseruserName, ouserid, ouseravatarurl , opost  } = dd
+    // console.log( 'soob dd=', dd)
+
+   // if (!firebaseInitialized) {
+    if ( !global.firebaseInitialized ) {   
+      initializeApp(); // Инициализируем Firebase приложение только, если не было инициализации ранее
+     //firebaseInitialized = true; // Устанавливаем флаг, что Firebase был инициализирован
+     global.firebaseInitialized = true
+      }
+
+    //отправка пуш-нотификация конкретному юзеру
+   let result = await  admin.messaging().sendEachForMulticast({
+ 
+        //tokens: owner.tokens, // ['token_1', 'token_2', ...]
+tokens:[tokenfirebase],
+notification: {
+        title:ttitle, // : 'Заголовок уведомления сервер',   
+        body: bbody, //: 'Текст уведомления сервер',     
+            // owner: JSON.stringify(owner),
+        //  user: JSON.stringify(user),
+         // picture: JSON.stringify(picture),
+         
+        },
+        data: {
+          // dd:  'xxxxxxxxxxxxxxxx'
+           ousername,
+           ouseruserName, 
+            ouserid,
+              ouseravatarurl ,
+              opost 
+        },
+   
+       });
+   //----- для лайка нужен айди пост и юзер который изменяет
+
+
+ //   console.log("result=", result);
+   
+ } catch (error) { console.error('Ошибка soob :', error); }
+  
+
+ }
+
+  
+
+  
 
 
  // create post
@@ -78,6 +135,8 @@ exports.getAllPosts = catchAsyncErrors(async (req, res, next) => {
  // add or remove likes
 exports.updateLikes = catchAsyncErrors(async (req, res, next) => {
   try {
+
+    console.log('---------------------------------------------------updateLikes  ')
     const postId = req.body.postId;
      // соединение с бд
  await connectDb()
@@ -85,10 +144,15 @@ exports.updateLikes = catchAsyncErrors(async (req, res, next) => {
     const post = await Post.findById(postId);
 //совпало
 
-//console.log( req.user.id, '  000=req.user.id========updateLikes post =', post ) 
+ console.log( req.user.id, '  000=req.user.id========updateLikes post =', post ) 
 
-    const isLikedBefore = post
-    .likes.find((item) => item.userId === req.user.id );
+const tokenfb = req.user.mytokenFirebase 
+const likeInUser = req.user
+
+//console.log( likeInUser, ' = name ========  mytokenFirebase=', tokenfirebase) 
+
+
+    const isLikedBefore = post.likes.find((item) => item.userId === req.user.id );
 
     if (isLikedBefore) {
   //да есть т.е. нажато на лайк  и теперь удалим лайк  pull из массива
@@ -106,11 +170,14 @@ exports.updateLikes = catchAsyncErrors(async (req, res, next) => {
 
         //console.log(  '1  ===updateLikes  ' , postId) 
  // соединение с бд
- await connectDb()
+// await connectDb()
 
- // проверяем , если в посте нет , то в Notification
+
+//const yesNotifi = "no" //пока нет нотификации
+     if (yesNotifi === "yes") {
+// проверяем , если в посте нет , то в Notification
       if (req.user.id !== post.user._id) {
-     //   console.log( post.user._id, '===2  ===updateLikes req.user.id=' , req.user.id) 
+        console.log( post.user._id, '===2  ===updateLikes req.user.id=' , req.user.id) 
      
     // const noti = await Notification.findById(????);
        //??? А если нет его, то что удалять
@@ -121,8 +188,29 @@ exports.updateLikes = catchAsyncErrors(async (req, res, next) => {
           type: "Like",
           postId: postId,  //13-47-57
         });
+
       }
+    
+    }// конец пока нет нотификации
+
+
+
      // console.log(  '3 ===updateLikes') 
+
+////////////////////////////////////
+const ttitle = 'ЛАЙК'
+const bbody = ' отменил лайк ' + likeInUser.name
+const ousername =  ''  // likeInUser.name
+const ouseruserName = ''  //likeInUser.userName
+ const ouserid =  likeInUser.id
+const ouseravatarurl =    ''  //likeInUser.avatar.url
+ const opost = postId
+
+const dd ={ ousername , ouseruserName, ouserid, ouseravatarurl , opost  }
+soob(tokenfb, ttitle, bbody, dd)
+///////////////////////////////////////////
+
+
 
       res.status(200).json({
         success: true,
@@ -141,7 +229,7 @@ exports.updateLikes = catchAsyncErrors(async (req, res, next) => {
               userName: req.user.userName,
               userId: req.user.id,
               userAvatar: req.user.avatar.url,
-              postId,
+                 postId, // ?????? что за поле
             },
           },
         }
@@ -150,6 +238,9 @@ exports.updateLikes = catchAsyncErrors(async (req, res, next) => {
  //    '=req.user.id 2   не найден isLikedBefore  post.user._id=',post.user._id) 
 
 
+ //const yesNotifi = "no" //пока нет нотификации
+if (yesNotifi === "yes") {
+ 
        // проверяем , если в посте нет , то в Notification
       if (req.user.id !== post.user._id) {
 // console.log(  '--!!!!------------сохраним   postId=',
@@ -164,12 +255,32 @@ await Notification.create({
           postId: postId, //13-47-57
         });
       }
+}// конец пока нет нотификации
+
+
+////////////////////////////////////
+//----- для лайка нужен айди пост и юзер который изменяет
+const ttitle = 'ЛАЙК'
+const bbody = ' добавил лайк ' + likeInUser.name
+const ousername =  likeInUser.name
+const ouseruserName =  likeInUser.userName
+const ouserid =  likeInUser.id
+const ouseravatarurl =  likeInUser.avatar.url
+ const opost = postId
+const dd ={ ousername , ouseruserName, ouserid, ouseravatarurl , opost  }
+
+soob(tokenfb, ttitle, bbody, dd)
+///////////////////////////////////////////
+
 
       res.status(200).json({
         success: true,
         message: "Like Added successfully",
       });
      }
+     console.log(  '--!!!!-------------Like Added successfully')
+
+
   } catch (error) {
     console.log(error);
     return next(new ErrorHandler(error.message, 400));
@@ -332,7 +443,11 @@ const reply = post.replies.find((reply) => reply._id.toString() === replyId);
       reply.likes = reply.likes.filter((like) => like.userId !== req.user.id);
 
   //console.log( '3 ---------updateReplyLikes--------Есть лайк к ответу reply.likes =',  reply.likes)  
-      if (req.user.id !== post.user._id) {
+ 
+  //const yesNotifi = "no" //пока нет нотификации
+if (yesNotifi === "yes") {
+
+  if (req.user.id !== post.user._id) {
 
         await Notification.deleteOne({
           "creator._id": req.user.id,
@@ -341,6 +456,9 @@ const reply = post.replies.find((reply) => reply._id.toString() === replyId);
            postId: postId,  //13-47-57
         });
       } 
+
+}// конец пока нет нотификации
+
  // console.log( '4 ---------updateReplyLikes-------- сохраняем' )  
 
 
@@ -386,12 +504,12 @@ const reply = post.replies.find((reply) => reply._id.toString() === replyId);
       // );
     //  console.log( '4 ---------updateReplyLikes------проверяем в Notification') 
 
+      //const yesNotifi = "no" //пока нет нотификации
+if (yesNotifi === "yes") {
+ 
    // проверяем , если в посте нет , то в Notification
    if (req.user.id !== post.user._id) {
-
   //  console.log( '4.1 -======updateReplyLikes----создаем в Notification postId=', postId) 
-     
-    
     //   await Notification.create({
     //   creator: req.user,
     //    type: "PROBA Follow",
@@ -410,7 +528,7 @@ const reply = post.replies.find((reply) => reply._id.toString() === replyId);
        postId: postId,         // 13-47-57
       });
     }
-
+}// конец пока нет нотификации
  
 
     //console.log( '5 ---------updateReplyLikes-----сохраняем')  
@@ -566,8 +684,10 @@ exports.updateRepliesReplyLike = catchAsyncErrors(async (req, res, next) => {
       // If liked before, remove the like from the reply.likes array
       reply.likes = reply.likes.filter((like) => like.userId !== req.user.id);
 
+       //const yesNotifi = "no" //пока нет нотификации
+if (yesNotifi === "yes") {
+  
       if (req.user.id !== post.user._id) {
-
         await Notification.deleteOne({
           "creator._id": req.user.id,
           userId: post.user._id,
@@ -575,6 +695,8 @@ exports.updateRepliesReplyLike = catchAsyncErrors(async (req, res, next) => {
           postId: postId,  //13-47-57
         });
       }
+ 
+  }// конец пока нет нотификации
 
       await post.save();
 
@@ -594,8 +716,10 @@ exports.updateRepliesReplyLike = catchAsyncErrors(async (req, res, next) => {
 
     reply.likes.push(newLike);
 
+    //const yesNotifi = "no" //пока нет нотификации
+if (yesNotifi === "yes") {
+    
     if (req.user.id !== post.user._id) {
-      
       await Notification.create({
         creator: req.user,
         type: "Like",
@@ -604,6 +728,9 @@ exports.updateRepliesReplyLike = catchAsyncErrors(async (req, res, next) => {
         postId: postId, //13-47-57
       });
     }
+  
+  }// конец пока нет нотификации
+
 
     await post.save();
 

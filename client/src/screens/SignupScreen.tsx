@@ -27,7 +27,7 @@ const SignupScreen = ({navigation}: Props) => {
 const dispatch = useDispatch();
   
   //получим данные выборка юзера - ошибка или уутинфицирован
-const {error, isAuthenticated} = useSelector((state: any) => state.user);
+const {error, isAuthenticated, myfirebasetoken} = useSelector((state: any) => state.user);
 
 // только  вначале выполняется  при изменении error или аутинфикации
 useEffect(() => {
@@ -77,9 +77,12 @@ useEffect(() => {
   const submitHandler = (e: any) => {
    // loginUser(email, password)(dispatch);
 
-   //Alert.alert("тест Login successfull!! aply")
-   registerUser(name, email, password, avatar)(dispatch);
-  //  ToastAndroid.showWithGravity(
+    //Alert.alert("тест tokenfirebase=" + tokenfirebase)
+  
+   registerUser(name, email, password, avatar, myfirebasetoken)(dispatch);
+  
+  
+   //  ToastAndroid.showWithGravity(
   //   "тест Login successfull!!",
   //   ToastAndroid.LONG,
   //   ToastAndroid.BOTTOM,
@@ -110,12 +113,12 @@ useEffect(() => {
    value={name}
      placeholderTextColor={'#778394'}
      onChangeText={text => setName(text)}
-  style={tw`w-full h-35px rounded-3 border  border-2 border-green-300  bg-white  px-2 my-2 mb-4   `}
+  style={tw`w-full  text-[20px]  border border-2   rounded-md  px-2 py-1   my-2 mb-4   text-black  `}
     
   />
   <TextInput
     placeholder="Enter your email"
-    style={tw`w-full h-35px border border-2   rounded-md  px-2 my-2 mb-4  text-black`}
+    style={tw`w-full  text-[20px]  border border-2   rounded-md  px-2 py-1   my-2 mb-4   text-black`}
      value={email}
    placeholderTextColor={'#888383'}
   onChangeText={text => setEmail(text)}
@@ -124,7 +127,7 @@ useEffect(() => {
 
 <TextInput
     placeholder="Enter your password"
-    style={tw`w-full h-35px border border-2   rounded-md  px-2 my-2 mb-4  text-black`}
+    style={tw`w-full  text-[20px]  border border-2   rounded-md  px-2 py-1   my-2 mb-4   text-black`}
      value={password}
         placeholderTextColor={'#000'}
   onChangeText={text => setPassword(text)}

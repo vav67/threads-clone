@@ -7,6 +7,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 // get notifications
 export const getNotifications = () => async (dispatch: Dispatch<any>) => {
   try {
+    //  тк просто журнал событий
     dispatch({  type: 'getNotificationRequest',    });
 
     const token = await AsyncStorage.getItem('token');

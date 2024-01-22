@@ -1,8 +1,11 @@
+import * as React  from 'react';
+import   {useEffect, useRef, useState} from 'react';
+
 import {FlatList,  View , TouchableOpacity,
   Animated, 
   Easing,
    RefreshControl } from 'react-native';
-import React, {useEffect, useRef, useState} from 'react';
+
 import {SafeAreaView, Text} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
  import {getAllPosts} from '../../redux/actions/postAction';
@@ -11,7 +14,7 @@ import { StatusBar } from 'native-base';
 
    import Loader from '../common/Loader';
   import Lottie from 'lottie-react-native';  //13-24-05
- const loader = require('../assets/animation_lkbqh8co.json');
+ 
 
  import { getAllUsers } from '../../redux/actions/userAction';
 
@@ -23,14 +26,15 @@ import {URI} from '../../redux/URI';
 
 import tw from 'twrnc';
  
-
+const loader = require('../assets/animation_lkbqh8co.json');
 
 type Props = {
     navigation: any;
 };
 
 const HomeScreen = (props: Props) => {
- const animation = false //сам добавил
+ const animation = true //сам добавил
+
   const {user, token, users} = useSelector((state: any) => state.user); //сам добавил
 
   const {posts, isLoading} = useSelector((state: any) => state.post);
@@ -67,6 +71,7 @@ function onRelease() {
   if (offsetY <= -refreshingHeight && !isRefreshing) {
     setIsRefreshing(true);
     setTimeout(() => {
+      console.log( '-### HomeScreen getAllPosts onRelease посты ' )  
       getAllPosts()(dispatch);
       setIsRefreshing(false);
     }, 3000);
@@ -82,6 +87,7 @@ function onScrollEndDrag(event: any) {
   if (y <= -refreshingHeight && !isRefreshing) {
     setIsRefreshing(true);
     setTimeout(() => {
+      console.log( '-### HomeScreen getAllPosts onScrollEndDrag посты ' )  
       getAllPosts()(dispatch);
       setIsRefreshing(false);
     }, 3000);
@@ -113,12 +119,13 @@ useEffect(() => {
 
 
 
-  useEffect(() => {
-    getAllPosts()(dispatch);
-   // getAllUsers()(dispatch);
-  }, [dispatch]);
+  // useEffect(() => {
+  //   console.log( '-### ??????????? HomeScreen getAllPosts посты ' )        
+  //   getAllPosts()(dispatch);
+  //  // getAllUsers()(dispatch);
+  // }, [dispatch]);
 
-//  console.log( 'posts=', posts )
+ // console.log( 'posts=', posts )
 
 
 
@@ -142,7 +149,7 @@ useEffect(() => {
 
   }
 
- // console.log( '---HomeScreen   проверка  users=', users )
+//   console.log( '---HomeScreen   проверка  users=', users )
 
   return (
     <>
@@ -151,25 +158,30 @@ useEffect(() => {
          animation ? ( 
 //-----------это без анимации-----при const animation = true --------------------
  isLoading ? (
+  <>
+  {/* <Text  style={tw`text-black`}> Постов = {posts?.length} </Text> */}
+ 
       <Loader />
+ </>     
     ) : 
     (
   
     <SafeAreaView>      
-            <TouchableOpacity  onPress={()=>ppNotifi(user?.name) }   >
+            {/* <TouchableOpacity  onPress={()=>ppNotifi(user?.name) }   >
              <View style={tw`pl-3`} >
         <Text style={tw`text-black text-5 bg-[#707cec]`}>
-           {user?.name}      --это   HomeScreen   </Text>
+           {user?.name}      --это   HomeScreen +  </Text>
+           <Text  style={tw`text-black`}> Постов = {posts?.length} </Text>    
          </View>
-         </TouchableOpacity>
+         </TouchableOpacity> */}
        <StatusBar 
         animated={true}
         backgroundColor={"#61dafb"}
         barStyle={ 'dark-content'}
         showHideTransition={ 'fade'}
         />
-           <View style={tw`mb-10   `}
-       //сам    нижняя часть для последнего сообщения 
+           <View style={tw`mb- 1 `}
+       // !!!!!   сам    нижняя часть для последнего сообщения 
            >
   
               <FlatList
@@ -197,14 +209,14 @@ useEffect(() => {
       ) : 
       (
         <SafeAreaView>
-       <TouchableOpacity  onPress={()=>ppNotifi(user?.name) }   >
+    <TouchableOpacity  onPress={()=>ppNotifi(user?.name) }   >
             <View style={tw`pl-3`} >
        <Text style={tw`text-black text-5 bg-[#707cec]`}>
            {user?.name}  --это HomeScreen загруз  </Text>
         </View>
-        </TouchableOpacity>
+        </TouchableOpacity> 
 
-          <Lottie
+       {/* уберем пока    <Lottie
             ref={lottieViewRef}
             // style={tw`  height-refreshingHeight,
             //            position-'absolute', top-15, left-1, right-1,
@@ -223,7 +235,7 @@ useEffect(() => {
             source={loader}
             progress={progress}
           />
-          {/* custom loader not working in android that's why I used here built 
+         * custom loader not working in android that's why I used here built 
           in loader for android and custom loader for android but 
           both working perfectly
           пользовательский загрузчик не работает в Android, поэтому я использовал здесь

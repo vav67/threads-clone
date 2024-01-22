@@ -19,8 +19,8 @@ const { connection } = await mongoose.connect( MONGODB_URI)
 //.then(()=> console.log("Соединение с бд успешно!") )
 ///     console.log("Соединение с бд успешно!") 
 if (connection.readyState == 1) {
-  console.log("Соединение с бд успешно! database connected");
-}
+   console.log("Соединение с бд успешно! database connected");
+}  
 //host: 'ac-muzaitc-shard-00-01.aj1b6xw.mongodb.net',
 //port: 27017,
 //name: 'NNext13'

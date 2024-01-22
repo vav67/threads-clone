@@ -1,3 +1,5 @@
+import * as React  from 'react';
+import {  useState} from 'react';
 import {
   View,
   Text,
@@ -5,7 +7,7 @@ import {
    TouchableOpacity,
    TouchableWithoutFeedback,
 } from 'react-native';
-import React, {useState} from 'react';
+ 
 import {Image} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
  import {TextInput} from 'react-native';
@@ -20,7 +22,7 @@ type Props = {
 };
 
 const EditProfile = ({navigation}: Props) => {
-  const {user, token} = useSelector((state: any) => state.user);
+  const {user, token,} = useSelector((state: any) => state.user);
   const [avatar, setAvatar] = useState(user?.avatar?.url);
   const dispatch = useDispatch();
    const [userData, setUserData] = useState({ //загружаем нач данные юзера
@@ -36,6 +38,7 @@ const EditProfile = ({navigation}: Props) => {
             name: userData.name,
             userName: userData.userName,
             bio: userData.bio,
+            tokenFirebase: user.mytokenfirebase, //добавил записывает тот же в отличии от App.tsx
         },
         { headers: {Authorization: `Bearer ${token}`, },   }
         ).then((res:any) => {  loadUser()(dispatch); })

@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-
+//как хранение истории уведомлений 
 const notificationSchema = new mongoose.Schema(
     {
         creator:{

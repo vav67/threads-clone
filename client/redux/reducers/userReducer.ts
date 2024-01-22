@@ -6,12 +6,39 @@ const intialState = {
   isLoading: false, //5-11-13 добавил
   // пока заменю на 
  // isLoading: true, //5-11-13 добавил 
-  user: {},
+ user: {
+   followers: [{ userId:{} }],
+    following: [{ userId:{} }],
+
+
+   },
+
+  //   user:{    // userr:{
+  //   _id: '',
+  //   mytokenFirebase:  '',
+  //  name: '',
+  //    userName: '',
+  //   bio: '',   //////
+  //   email: '',
+  //   password: '',
+  //   avatar: {
+  //     public_id: '',
+  //     url: '',
+  //   },
+  //   followers: [{ userId:{} }],
+  //   following: [{ userId:{} }],
+  //   podpisani: [{ usertoken:{} }],
+  //   podpisaniNumber: 0,
+  // },
+//updatedAt "createdAt"
+
    users: [], //5-04-22 добавил юзеров, про подписку
   token:"",  //4-37-58 добавил токен
-   error: null,
-   tokenfirebase:"ss", //сам добавил токен полученный от Firebase
-   pproba:"start",
+  myfirebasetoken: "", //сам из хранилища
+  error: null,
+  //ненужен tokenfirebase:"ss", //сам добавил токен полученный от Firebase
+   pproba:"start",  //сам происходящие действия
+ //  soob:{},  //сам пришло сообщение
 };
 
 const userRegisterRequest = createAction('userRegisterRequest')
@@ -36,15 +63,20 @@ const userLoginFailed = createAction('userLoginFailed')
 
  const getUsersRequest = createAction('getUsersRequest')
  const getUsersSuccess = createAction('getUsersSuccess')  
+ 
+ const getUsersSuc = createAction('getUsersSuc')  
+
  const getUsersFailed = createAction('getUsersFailed')
 
+const  subscribeUser = createAction('subscribeUser')  //на меня подписались
+const  unsubscribeUser = createAction('unsubscribeUser') //от меня отписались
+
  // сам проверка прохождения
- const ppUsersError = createAction('ppUsersError')
- const ppUserToken = createAction('ppUserToken')
- const ppUserYES = createAction('ppUserYES')
- const ppUserNO = createAction('ppUserNO')
- const ppUserTokenDB = createAction('ppUserTokenDB')
+  const ppUser = createAction('ppUser')
  
+
+
+
 //сам допишу токен полученный от Firebase
 const getusertokenFirebase = createAction('getusertokenFirebase')
 
@@ -82,7 +114,7 @@ export const userReducer = createReducer(intialState,
 
 
 
-  //ошибка
+  //ошибка 
   // userRegisterFailed: (state, action) => {
   //   state.loading = false;
   //   state.isAuthenticated = false;
@@ -122,8 +154,16 @@ export const userReducer = createReducer(intialState,
    //state.user = action.payload; был этот
    //на
    state.user = action.payload.user;
-   state.token = action.payload.token;  //4-40-50 добавил токен
- })
+   //state.userr = action.payload.user;
+ 
+ state.token = action.payload.token;  //4-40-50 добавил токен
+   if ( action.payload.myfirebasetoken === null ) {
+   state.myfirebasetoken = ""
+   } else {
+    state.myfirebasetoken = action.payload.myfirebasetoken
+   }
+   
+  })
 
 
   // userLoadFailed: (state, action) => {
@@ -148,12 +188,24 @@ export const userReducer = createReducer(intialState,
   //   state.loading = false;
   //   state.user = action.payload;
   // },
+
+ // это начальная проверка - аутенфикация 
   .addCase(userLoginSuccess, (state, action:any) => {
      
     state.loading = false;
    state.isAuthenticated = true;
-    state.user = action.payload;
-  
+  //  state.user = action.payload; был этот
+//на
+state.user = action.payload.user;
+//state.userr = action.payload.user;
+if ( action.payload.myfirebasetoken === null ) {
+  state.myfirebasetoken = ""
+  } else {
+   state.myfirebasetoken = action.payload.myfirebasetoken
+  }
+ 
+
+
 })
 
 
@@ -167,7 +219,10 @@ export const userReducer = createReducer(intialState,
       state.isAuthenticated = false;
        state.loading = false;
        state.error  = action.payload;
-        state.user = {};
+      // state.user =  { } 
+
+        state.user = null  // {};
+       // state.userr = null;
 })
 
 
@@ -179,7 +234,10 @@ export const userReducer = createReducer(intialState,
   .addCase(userLogoutSuccess, (state, action:any) => {
     state.loading = false;
    state.isAuthenticated = false;
-   state.user = {};
+  //  state.user =  { } 
+
+    state.user = null // {};
+ //  state.userr = null;
 })
   // userLogoutSuccess: state => {
   //   state.loading = false;
@@ -205,9 +263,19 @@ export const userReducer = createReducer(intialState,
 
   .addCase(getUsersSuccess, (state, action:any) => {
             // console.log( '******getUsersSuccess user.state.isLoading = false')
+ //console.log( '**###################-getUsersSuccess state.users action.payload=', action.payload )           
     state.isLoading = false;
     state.users = action.payload;
 })
+
+.addCase(getUsersSuc, (state, action:any) => {
+  // console.log( '******getUsersSuccess user.state.isLoading = false')
+//state.isLoading = false;
+state.users = action.payload;
+})
+
+
+
   // getUsersSuccess: (state,action) => {
   //   state.isLoading = false;
   //   state.users = action.payload;
@@ -237,38 +305,128 @@ export const userReducer = createReducer(intialState,
  
 
 .addCase(getusertokenFirebase, (state, action:any) => {
- // console.log( '=== РЕДЮСЕР =', action.payload )
-
- state.tokenfirebase = action.payload ;  //сам добавил токен полученный от Firebase
+ // console.log( '=== РЕДЮСЕР getusertokenFirebase=', action.payload )  
+ state.myfirebasetoken = action.payload ;  //сам добавил токен полученный от Firebase
 })
 
 
 // сам для поиска ошибок
-.addCase(ppUsersError, (state, action:any) => {
-  // console.log( '=== РЕДЮСЕР =', action.payload )
-   state.pproba = action.payload ;  //сам добавил токен полученный от Firebase
- })
- .addCase(ppUserToken, (state, action:any) => {
-  // console.log( '=== РЕДЮСЕР =', action.payload )
-   state.pproba = action.payload ;  //сам добавил токен полученный от Firebase
- })
- 
- .addCase(ppUserYES, (state, action:any) => {
-  // console.log( '=== РЕДЮСЕР =', action.payload )
-   state.pproba = action.payload ;  //сам добавил токен полученный от Firebase
- })
- 
- .addCase(ppUserNO, (state, action:any) => {
-  // console.log( '=== РЕДЮСЕР =', action.payload )
-   state.pproba = action.payload ;  //сам добавил токен полученный от Firebase
- })
- .addCase(ppUserTokenDB, (state, action:any) => {
+ .addCase(ppUser, (state, action:any) => {
   // console.log( '=== РЕДЮСЕР =', action.payload )
    state.pproba = action.payload ;  //сам добавил токен полученный от Firebase
  })
 
  
  
- 
+ //     const updatedUsers = users.map((userObj: any) => userObj._id === ouserid
+ //     ? { //нашел на кого подписываюсь
+ //         ...userObj,
+ //       followers: [...userObj.followers, {ouserpodpis}], 
+ //       }
+ //     : userObj,any
+//на меня подписались
 
-});
+/*
+По вашему коду я вижу, что вы пытаетесь обновить массив followers в 
+объекте userr. Однако, когда вы фильтруете массив внутри unsubscribeUser,
+ вы обращаетесь к state.userr.followers, но вы также обновляете этот 
+ массив внутри subscribeUser:
+Когда вы подписываетесь на пользователя, вы добавляете нового подписчика в
+ массив followers. Похоже, что после этого вы пытаетесь отфильтровать массив
+  в unsubscribeUser, но ваш фильтр использует state.userr.followers, 
+  который уже был изменен в subscribeUser.
+*/ 
+
+.addCase(subscribeUser, (state, action:any) => {
+     //добавим айпи подписанта
+     console.log( action.payload ,'====d0=============SUB=',state.user  )    
+  // state.userr.followers = [...state.userr.followers, {
+  //     userId: action.payload }];
+  // вы создаете новый объект updatedUserr с обновленным массивом followers
+ //  Затем вы присваиваете этот объект обратно в state.userr  
+ // . Это обеспечит корректную обработку отписки в дальнейшем.
+  const updatedUserr = {
+    ...state.user,
+     following: [...state.user.following, { "userId": action.payload }],
+   };
+    state.user = updatedUserr;
+
+
+   console.log(action.payload , '===posle==============SUB=',state.user)     
+ })
+
+
+//const  unsubscribeUser = createAction('unsubscribeUser') //от меня отписались
+//еще также unsubscribeUser 
+
+.addCase(unsubscribeUser, (state, action:any) => {
+  //добавим айпи подписанта
+   console.log(action.payload ,'====d0=============UNSUB=',state.user  )
+ 
+  state.user.following =  state.user.following.filter(
+      (fol) => fol.userId !==action.payload ) 
+
+
+      console.log( action.payload ,'====posle=============UNSUB=',state.user  )       
+})
+
+
+
+}) 
+
+/**
+ * 
+Да, в определенном смысле подход, который я предложил, относится к концепции
+"чистых функций". Чистые функции - это функции, которые при заданных
+ одинаковых входных данных всегда возвращают одинаковый результат, и они не 
+ имеют побочных эффектов.
+
+В вашем случае, изменение состояния напрямую внутри редюсера может 
+считаться изменением состояния с побочным эффектом. Однако, создание нового 
+объекта с обновленными данными и присваивание его обратно в состояние
+ является более "чистым" подходом, так как он не изменяет текущее состояние,
+  а создает новое.
+
+Такой подход обеспечивает предсказуемость и управляемость вашего кода, 
+что может быть полезным, особенно в контексте управления состоянием в Redux. 
+Тем не менее, важно помнить, что в некоторых случаях некоторые мутации
+ состояния могут быть неизбежными или даже предпочтительными, но в целом 
+ стремление к чистым функциям может способствовать более понятному и легко 
+ поддерживаемому коду.
+-----
+Определенно, иногда использование мутаций может быть удобным и
+ предпочтительным в некоторых сценариях. Вот пример, который демонстрирует 
+ случай, когда мутация может быть оправданной:
+const initialState = {
+  counter: 0,
+};
+
+const incrementCounter = (state, action) => {
+  // Мутация состояния - увеличиваем значение счетчика на 1
+  state.counter += 1;
+};
+
+// Редюсер, использующий мутацию
+const counterReducer = (state = initialState, action) => {
+  switch (action.type) {
+    case 'INCREMENT':
+      // Вызываем функцию, которая мутирует состояние
+      incrementCounter(state, action);
+      return { ...state }; // Возвращаем новый объект состояния
+    default:
+      return state;
+  }
+};
+
+В этом примере функция incrementCounter мутирует состояние напрямую, 
+увеличивая значение счетчика. Затем редюсер возвращает новый объект состояния.
+ Этот подход может быть предпочтителен, если вам нужна максимальная 
+ производительность и вы уверены, что мутация не приведет к нежелательным
+  побочным эффектам. Однако, в контексте Redux, который старается быть
+   предсказуемым и легко отслеживаемым, часто более безопасным и 
+   поддерживаемым является создание новых объектов состояния без мутаций.
+
+
+
+
+ */

@@ -37,7 +37,7 @@ const [data, setData] = useState(
     },
   ]);
 
-  const {users, user, isLoading, tokenfirebase } = useSelector((state: any) => state.user);
+  const {users, user, isLoading } = useSelector((state: any) => state.user);
   const dispatch = useDispatch();
 
  //ненужно 5-06-25 const [users, setUsers] = useState<any>(null);
@@ -93,7 +93,7 @@ const filteredUsers =
    };
 
 
-   console.log( 'tokenfirebase=', tokenfirebase)    
+  // console.log( 'tokenfirebase=', tokenfirebase)    
 
 
   return (
@@ -140,14 +140,14 @@ renderItem = {({item}) =>{
                     userId: user._id,
                     users,
                     followUserId: e._id,
-                    tokenfirebase,  //сам передаем токен для оповещения
+                    tokenfirebase: user.mytokenFirebase,  //сам передаем токен для оповещения
                   })(dispatch);
                 } else {
                   await followUserAction({   // подписка
                     userId: user._id, 
                     users,
                     followUserId: e._id,
-                    tokenfirebase,  //сам передаем токен для оповещения
+                    tokenfirebase: user.mytokenFirebase,  //сам передаем токен для оповещения
                   })(dispatch);
                 }
     } catch (error) {  console.log(error, 'error');  }

@@ -29,7 +29,7 @@ const d= route.params.item
  // console.log( 'item=', d.name)
 
  //console.log( 'route.params =', route.params) 
-  const {users, user, isLoading, tokenfirebase } = useSelector((state: any) => state.user);
+  const {users, user, isLoading, myfirebasetoken } = useSelector((state: any) => state.user);   
  // console.log( '!! users=', users +  ' user=' + user )
   //const [fir, setFir] = useState('aa')
  
@@ -88,14 +88,14 @@ const FollowUnfollowHandler = async () => {
         userId: user._id,
         users,
         followUserId: data._id,
-        tokenfirebase,  //сам передаем токен для оповещения
+        tokenfirebase:myfirebasetoken,  //сам передаем токен для оповещения
       })(dispatch);
     } else {
       await followUserAction({ // подписка
         userId: user._id,
         users,
         followUserId: data._id,
-        tokenfirebase,  //сам передаем токен для оповещения
+        tokenfirebase:myfirebasetoken,  //сам передаем токен для оповещения
       })(dispatch);
     }
   } catch (error) {

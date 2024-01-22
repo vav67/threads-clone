@@ -1,4 +1,5 @@
-import React, {useEffect, useState} from 'react';
+import * as React  from 'react';
+import  {useEffect, useState} from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import Tabs from "./Tabs";
 import UserProfileScreen from '../src/screens/UserProfileScreen' 

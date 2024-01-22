@@ -12,7 +12,7 @@ const { VV } = require("../version");
 exports.hom = catchAsyncErrors(async (req, res, next) => {
     
     try {
-
+ 
  // соединение с бд
  await connectDb();
 
@@ -21,7 +21,7 @@ exports.hom = catchAsyncErrors(async (req, res, next) => {
        // res.status(200).json({ message: "Это тестовый маршрут /proba" });
   //пока      res.status(200).json({ message: `${useri.length}- всего  и  V ${VV()}` }); // версия
    const aa = " это версия "    
-        res.status(201).json({  success: true, aa });
+        res.status(201).json({  success: true,  aa });
      
   
     } catch (error) {

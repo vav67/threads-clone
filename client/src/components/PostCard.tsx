@@ -1,3 +1,4 @@
+import * as React  from 'react'
 import {
   View,
   Text,
@@ -5,7 +6,7 @@ import {
   Modal, // 13-11-42 добавления модального окна
   TouchableWithoutFeedback,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import  {useEffect, useState} from 'react';
  import {useDispatch, useSelector} from 'react-redux';
   import {Image} from 'react-native';
  import getTimeDuration from '../common/TimeGenerator'; //формати даты
@@ -42,7 +43,7 @@ const PostCard = ({item, isReply, navigation,   postId, replies
    const [openModal, setOpenModal] = useState(false);// 13-10-36
 
    const [userInfo, setUserInfo] = useState({
-    name: '',
+    name: 'del',
     avatar: {
       url: 'https://res.cloudinary.com/dshp9jnuy/image/upload/v1665822253/avatars/nrxsg8sd9iy10bbsoenn.png',
     },
@@ -114,10 +115,14 @@ const PostCard = ({item, isReply, navigation,   postId, replies
   };
 
 useEffect( () => {
+ // console.log(  '========== PostCard useeffect  item.user._id ==' , item.user._id   ) 
   axios.get(`${URI}/get-user/${item.user._id}`, {
     headers: {Authorization: `Bearer ${token}`},
   })
-  .then(res => { setUserInfo(res.data.user) })
+  .then(res => {
+   // console.log(  '====Получил====== PostCard useeffect  res.data.user ==' ,res.data.user  ) 
+    setUserInfo(res.data.user)
+     })
 
 }, [])
 

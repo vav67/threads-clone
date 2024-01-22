@@ -1,5 +1,5 @@
 import axios from 'axios';
-import {URI} from '../URI';
+import {URI, RAZRAB} from '../URI';
 //import { URI } from 'redux/URI';
 import {Dispatch} from 'react';
  import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -8,7 +8,7 @@ import {Dispatch} from 'react';
 // register user регистрируем пользователя
 // register user
 export const registerUser =
-  (name: string, email: string, password: string, avatar: string) =>
+  (name: string, email: string, password: string, avatar: string, myfirebasetoken: string) =>
   async (dispatch: Dispatch<any>) => {
     try {
 
@@ -22,7 +22,7 @@ export const registerUser =
   //   console.log( 'proba res=', res.data)
 // http://192.168.0.197:8000/api/v1/registration
       const {data} = await axios.post( `${URI}/registration`,
-        {name, email, password, avatar},
+        {name, email, password, avatar, myfirebasetoken},
         config,
       );
      // console.log( '3 registerUser ответ data=', data)
@@ -52,13 +52,17 @@ export const loadUser = () => async (dispatch: Dispatch<any>) => {
   try {
   dispatch({ type: 'userLoadRequest',  }); //загрузка
     
-  dispatch({ type: 'ppUserToken',  payload: "ПРОБУЕМ ВЗЯТЬ ИЗ ХРАНИЛИЩА token",  });
+  dispatch({ type: 'ppUser',  payload: "ПРОБУЕМ ВЗЯТЬ ИЗ ХРАНИЛИЩА token",  });
 
     //const jsonValue = await AsyncStorage.getItem('user');
    //4-32-21 заменим на 
    const token = await AsyncStorage.getItem('token');
- 
-  ///////////////////////////////////////////////////////////
+   const firebasetoken = await AsyncStorage.getItem('firebasetoken'); // сам  токен от  Firebase
+
+  //  if (firebasetoken === null) {
+   
+  // }
+   ///////////////////////////////////////////////////////////
   if (token === null) {
     // Токен не существует, предпринимаем необходимые действия
    // console.log('Токен не найден в AsyncStorage');
@@ -68,14 +72,14 @@ export const loadUser = () => async (dispatch: Dispatch<any>) => {
       type: 'userLoadFailed',
       payload: ' токена не существует token null',
     });
-    dispatch({ type: 'ppUserNO',  payload: "Нет token null",  });
+    dispatch({ type: 'ppUser',  payload: "Нет token null",  });
       console.error('Иногда  Ошибка экшен loadUser: token null' );  
    
  
   } else { 
 //////////ТОКЕН СУЩЕСТВУЕТ//////////////////////////////////////
 
-   dispatch({ type: 'ppUserTokenDB',  payload: "По токену ищем",  });
+   dispatch({ type: 'ppUser',  payload: "По токену ищем",  });
 
  //  console.log(  '2-loadUser ПРОБУЕМ ВЗЯТЬ ИЗ ХРАНИЛИЩА token=', token )
 
@@ -93,7 +97,7 @@ export const loadUser = () => async (dispatch: Dispatch<any>) => {
         });
     // console.log( '2.1 ЮЗЕРА нашли по токену user=', data.user )
 
-    dispatch({ type: 'ppUserYES',  payload: "Юзер найден",  });
+    dispatch({ type: 'ppUser',  payload: "Юзер найден",  });
       
 
     
@@ -102,6 +106,7 @@ export const loadUser = () => async (dispatch: Dispatch<any>) => {
      payload:{
       user: data.user,    //загружаем юзера
       token,
+      myfirebasetoken: firebasetoken,
      }
     })
 
@@ -113,7 +118,7 @@ export const loadUser = () => async (dispatch: Dispatch<any>) => {
       type: 'userLoadFailed',
       payload: error.response.data.message,
     });
-    dispatch({ type: 'ppUserNO',  payload: "Нет юзера-ошибка",  });
+    dispatch({ type: 'ppUser',  payload: "Нет юзера-ошибка",  });
       console.error('Иногда  Ошибка экшен loadUser:', error);  
   }
 };
@@ -122,13 +127,18 @@ export const loadUser = () => async (dispatch: Dispatch<any>) => {
 export const loginUser =
   (email: string, password: string) => async (dispatch: Dispatch<any>) => {
    
-    console.log( '4  client loginUser email=', email + ' password='+ password )
+    //console.log( '4  client loginUser email=', email + ' password='+ password )
 
     try {
       dispatch({    type: 'userLoginRequest',       });
 
-      dispatch({ type: 'ppUserNO',  payload: "проверка пароля и почты",  });
-
+//       const conv  = {headers: {'Content-Type': 'application/json'}}; 
+//       const {dd} = await axios.post( `https://threads-clone-plum-one.vercel.app/api/proba`, 
+//       {email, password},
+//    conv,
+//  );
+      dispatch({ type: 'ppUser',  payload: "1  проверка пароля и почты",  });
+      
       const config = {headers: {'Content-Type': 'application/json'}};
 
    //можно сделать отправка пароля по эектронной почте
@@ -138,11 +148,22 @@ export const loginUser =
         config,
       );
 
-      console.log( '4   это loginUser data=', data)
+    //  console.log( '4   это loginUser data=', data)
+    const firebasetoken = await AsyncStorage.getItem('firebasetoken'); // сам  токен от  Firebase
 
-      dispatch({ type: 'userLoginSuccess', payload: data.user, });
 
-      dispatch({ type: 'ppUserNO',  payload: "все ок пароля и почты",  });
+    //немного изменил сам payload
+   dispatch({ type: 'userLoginSuccess', 
+              payload:{  
+                user: data.user,    //загружаем юзера
+                 myfirebasetoken: firebasetoken,
+              }
+            })
+
+
+
+      dispatch({ type: 'ppUser',  payload: "все ок пароля и почты",  });
+
 
       //4-27-43 заменим const user = JSON.stringify(data.user)  
 //сохраним в хранилище пользователя
@@ -151,12 +172,10 @@ export const loginUser =
        if (data.token) {
          await AsyncStorage.setItem('token', data.token);
        }
-
-       
+   
     } catch (error: any) {
 
-      dispatch({ type: 'ppUserNO',  payload: "Ошибка экшен loginUser пароля и почты",  }); 
-      console.error('Ошибка экшен loginUser:', error);  
+        console.error('Ошибка экшен loginUser:', error);  
       dispatch({
         type: 'userLoginFailed',
         payload: error.response.data.message,
@@ -172,6 +191,7 @@ export const logoutUser = () => async (dispatch: Dispatch<any>) => {
    // await AsyncStorage.setItem('user', '');
    //4-33-58 на
    await AsyncStorage.setItem('token', '');
+   await AsyncStorage.setItem('firebasetoken', '');
    
    dispatch({ type: 'userLogoutSuccess',   payload: {},    });
 
@@ -208,7 +228,7 @@ export const getAllUsers = () => async (dispatch: Dispatch<any>) => {
       payload: error.response.data.message,
     });
     
-    dispatch({ type: 'ppUsersError',  payload: error.response.data.message,  });
+    dispatch({ type: 'ppUser',  payload: error.response.data.message,  });
 
 console.error('Ошибка экшен getAllUsers :', error.response.data.message   )// error);
     
@@ -224,51 +244,55 @@ interface FollowUnfollowParams {
  
  
 
-// // follow user подписка
+// // follow user подписка, где followUserId -причина подписки
 export const followUserAction =
   ({userId, users, followUserId,  tokenfirebase}: FollowUnfollowParams) =>
   async (dispatch: Dispatch<any>) => {
-
-    console.log('Подписка followUserAction userId= ', userId  );
-// console.log('Подписка followUserAction tokenfirebase= ', tokenfirebase  );
+ // followUserId - айди на кого подписываюсь
+ // userId -мой айди (кто нажимает на подпись)
     try {
       const token = await AsyncStorage.getItem('token');
 
-    // если совпадает айди пользователя и айди подписки пользователя 
- //    
-//  const  updatedUsers = users.map((userObj: any) => userObj._id === followUserId
-//      ?     
-//         { ...userObj,
-//           podpisaniNumber: 1,     //userObj.podpisaniNumber  =  + 1 
-//         }
+  const uu =  users.filter( (us: any) => us._id === followUserId  )
+//  console.log( uu[0].name, '=Подписка отфильтровали uu= ', uu[0].mytokenFirebase );
 
-//      : userObj,
-//  )
+  const followUsertokenFirebase = uu[0].mytokenFirebase
 
-//  const  up = updatedUsers.map((userObj: any) => userObj._id === followUserId
-//      ?      console.log('-------------измененный------Подписка юзер=', userObj.podpisaniNumber )
-       
-//      : userObj,
-//  )
-
-
+  // console.log(followUserId,'=!!!!!!!!!!!!!!!!!!!=followUserId --Подписка ---unfollowUserAction userId= ', 
+  //      userId +'  users='+ users. length );
+  //    users.map((userObj: any) => userObj._id === userId
+  //    ? 
+  //     console.log( '++++++++-userObj._id === userId=',userObj._id )
+  //         : console.log( '++++++++-userObj._id !== userId=',userObj._id ),
+  //  );
+ 
+ 
+////эта часть работает в автономном режиме (если мобила)//
+//RAZRAB = 'debug'   //release debug
+//*  RAZRAB = 'release'
+//************************************************ */
+//////Здесь проверка ненужна, т.к. сразу отображаться /////////////
+ if ( RAZRAB === 'release'   ) {
+   // followUserId - айди на кого подписываюсь
+ // userId -мой айди (кто нажимает на подпись)
+ dispatch({ type: 'subscribeUser',   payload: followUserId,    })
+} //конец только при релизе 
+ 
+   //Ты нажимаешь и отображает на кого подписан теперь
  const updatedUsers = users.map((userObj: any) => userObj._id === followUserId
-          ? {
-              ...userObj,
-            followers: [...userObj.followers, {userId}], //в ...userObj.followers добавим userId
-            }
-          : userObj,
-      );
-
-      //console.log('Подписка followUserAction изм массив updatedUsers= ', updatedUsers.podpisaniNumber  );
-
-     // console.log( 'клиент добавляет подписчика followUserAction updatedUsers=', updatedUsers)
-      // update our users state
-      dispatch({ type: 'getUsersSuccess', payload: updatedUsers, //измененный массив с добавленным подписчика
-      });
+ ? { //нашел на кого подписываюсь
+     ...userObj,
+   followers: [...userObj.followers, {  "userId": userId }], // userId: в ...userObj.followers добавим userId
+   }
+ : userObj,
+ )
+// console.log ('@@@@@@@ ЭКШЕНЫ SoobSubscribe---', updatedUsers ) 
+ 
+  dispatch({ type: 'getUsersSuccess',   payload: updatedUsers,   })
 
 
-      await axios.put( `${URI}/add-user`,  {followUserId , tokenfirebase },
+// console.log(  '=Подписка запрос на add-user '  )
+     await axios.put( `${URI}/add-user`,  {followUserId , followUsertokenFirebase },
         {  headers: { Authorization: `Bearer ${token}`, },   },
       );
       
@@ -277,31 +301,47 @@ export const followUserAction =
     }
   };
 
+
+
  // unfollow user - отписка от юзера
 export const unfollowUserAction =
   ({userId, users, followUserId, tokenfirebase}: FollowUnfollowParams) =>
   async (dispatch: Dispatch<any>) => {
           
-  //  console.log('unfollowUserAction userId= ', userId +'  users='+ users );
     try {
        const token = await AsyncStorage.getItem('token');
-      
- const updatedUsers = users.map((userObj: any) => userObj._id === followUserId
-          ? {
-              ...userObj,
-              followers: userObj.followers.filter(
-                (follower: any) => follower.userId !== userId,
-              ),
-            }
-          : userObj,
-      );
-// console.log( 'клиент отписывается от подписчика unfollowUserAction updatedUsers=', updatedUsers)
-      // update our users state отписаться
-      dispatch({ type: 'getUsersSuccess',   payload: updatedUsers,   });
+     
+      console.log(followUserId,'=followUserId  ОТПИСКА---unfollowUserAction userId= ', 
+                     userId +'  users='+ users );
+    const uu =  users.filter( (us: any) => us._id === followUserId  )
+  // console.log( uu[0].name, '=Подписка отфильтровали uu= ', uu[0].mytokenFirebase );
+     const followUsertokenFirebase = uu[0].mytokenFirebase
 
-      await axios.put( `${URI}/add-user`,  {followUserId,  tokenfirebase},
-           { headers: { Authorization: `Bearer ${token}`, },  },
-      );
+
+ ////////////Здесь проверка ненужна, т.к. сразу отображаться /////////////////////      
+ if ( RAZRAB === 'release'   ) {
+  dispatch({ type: 'unsubscribeUser',   payload: followUserId,   })
+     } //конец только при релизе 
+ 
+ const updatedUsers = users.map((userObj: any) => userObj._id === followUserId
+ ? {
+     ...userObj,
+     followers: userObj.followers.filter(
+       (follower: any) => follower.userId !== userId ,
+     ),
+   }
+ : userObj,
+);
+
+ dispatch({ type: 'getUsersSuccess',   payload: updatedUsers,   })
+
+ //console.log(  '=ОТПИСКА запрос на add-user '  )
+
+     await axios.put( `${URI}/add-user`,  {followUserId,  followUsertokenFirebase},
+         { headers: { Authorization: `Bearer ${token}`, },  },
+     );
+
+
     } catch (error) {
       console.log('Error following user:', error);
     }
@@ -309,24 +349,77 @@ export const unfollowUserAction =
 
  
 
-  // .addCase(getusertokenFirebase, (state, action:any) => {
-   //   state.tokenfirebase = action.payload ;  //сам добавил токен полученный от Firebase
-  //  })
+  //interface LikesParams {
+    //postId: string;
+    //posts: any;
+    //user: any;
+  //   postId?: string | null;
+    //   singleReplyId?: string; //11:06:06  добавил лайк ответ на ответ
+   // }
+    
+     // add likes добавляем лайк
+   // export const addLikes =   ({postId, posts, user}: LikesParams) =>
+
 //потом сделаем как сохранять токен в сторедж на компе
-  export const usertokenFirebase = (tokenFirebase:string) => async (dispatch: Dispatch<any>) => {
+  export const usertokenFirebase = (tokenFirebase:string,
+    name:string, userName:string, bio:string, ) => async (dispatch: Dispatch<any>) => {
     try {
-     // dispatch({  type: 'userLogoutRequest', });
-     
-     // await AsyncStorage.setItem('user', '');
-     //4-33-58 на
-    // await AsyncStorage.setItem('token', '');
-    console.log( 'эктив tokenFirebase=', tokenFirebase )
-     dispatch({ type: 'getusertokenFirebase', 
-                   payload: tokenFirebase,    });
+   //   console.log (  '+++++++++++++ЭКШЕНЫ usertokenFirebase  tokenFirebase->', tokenFirebase  ) 
+    // сохраним токен Firebase в ХРАНИЛИЩЕ
+    await AsyncStorage.setItem('firebasetoken', tokenFirebase) 
+    const token = await AsyncStorage.getItem('token');
+       
+  // console.log (  'итак name=', name, '  userName=',userName,  '  bio=',bio   )   
+
+   await axios.put(`${URI}/update-profile`,
+           { name, userName,  bio,
+               tokenFirebase:tokenFirebase,  },
+        { headers: {Authorization: `Bearer ${token}` }, } )
+                  
+        
+
+  dispatch({ type: 'getusertokenFirebase',   payload: tokenFirebase,    });
   
     } catch (error) {
-      console.error('Ошибка экшен  ', error);    
+      console.error('Ошибка сохранения fbtokendata:', error) 
       
     }
   };
    
+
+  //SoobSubscribe({ data, posts })(dispatch); 
+  export const SoobSubscribe =({ datapodpiska, user, users  }: { 
+      datapodpiska: any; user: any; users: any;   })=> async (dispatch: Dispatch<any>) => {
+    try {
+    console.log (   '   ===============ЭКШЕНЫ SoobSubscribe  datapodpiska->', datapodpiska  ) 
+ 
+    const { ouserid , ousername, ouserpodpis, otik } = datapodpiska
+  //   users.map((userObj: any) => userObj._id === ouserid
+  //    ? 
+  //     console.log( '**--userObj._id === ouserid=',userObj._id )
+  //         : console.log( '**---userObj._id !== ouserid=',userObj._id ),
+  //  );
+
+    //datapodpiska-> {"ouserid": "651580dbd3045568faf2986b", "ousername": "test", 
+    //"ouserpodpis": "659552221ad9138615598711"}
+//, otik
+// ouserid - айди кто подписывается
+// ouserpodpis -айди на кого подписывается
+ 
+ 
+  // это подписка, пришло от того юзера кто подписался ()
+
+     if ( otik === 'SUBSCRIBE'   ) { //это добавляю кто на меня подписался
+      
+       dispatch({ type: 'subscribeUser',   payload: ouserpodpis,    })
+}
+   else {  //это отписка
+ dispatch({ type: 'unsubscribeUser',   payload: ouserpodpis,   })
+ 
+} // конец проверки
+
+
+  } catch (error: any) {
+    console.log(error, 'error');
+  }
+};

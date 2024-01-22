@@ -30,15 +30,36 @@ var admin =require( "firebase-admin");
 //var serviceAccount =require( "path/to/serviceAccountKey.json"); 
 //var serviceAccount =require( "./threads-starting-firebase-adminsdk-6ji17-1e0f991d95.json"); 
 
-const initializeApp = () => {
-admin.initializeApp({
- // учетные данные: администратор.учетные данные .серт(serviceAccount)
- credential: admin.credential.cert(serviceAccount),
-});
 
-}
+// Здесь инициализируем глобальную переменную
+global.firebaseInitialized = false;  //добавим
+
+
+
+  const initializeApp = () => {
+   // initializeApp()
+ if (!global.firebaseInitialized) {    //добавим 
+  admin.initializeApp({
+   // учетные данные: администратор.учетные данные .серт(serviceAccount)
+   credential: admin.credential.cert(serviceAccount),
+  });
+  global.firebaseInitialized = true;  //добавим
+
+       }
+  }
+
+// Функция инициализации Firebase
+// function initializeFirebase() {
+//   if (!global.firebaseInitialized) {
+//     initializeApp(); // Инициализируем Firebase приложение только, если не было инициализации ранее
+//     global.firebaseInitialized = true; // Устанавливаем флаг, что Firebase был инициализирован
+//   }
+// }
+
+
 
 module.exports = {
     initializeApp,
+   // initializeFirebase,
     admin,
   };

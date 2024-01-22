@@ -1,4 +1,5 @@
-import React, {useEffect, useState} from 'react';
+import * as React  from 'react';
+import {useEffect, useState} from 'react';
 
 import { View, Text, 
   TouchableOpacity, TextInput, 
@@ -9,6 +10,7 @@ import {loadUser, loginUser} from '../../redux/actions/userAction';
 import {useDispatch, useSelector} from 'react-redux';
 
 import tw from 'twrnc';
+import axios from 'axios';
 
 type Props = {
   navigation: any
@@ -33,6 +35,26 @@ const LoginScreen = ({navigation}: Props) => {
   //   ToastAndroid.BOTTOM,
   //  )
   };
+
+  const subb = (e: any) => {
+   // Alert.alert('Login successful!')
+     axios.get(`https://threads-clone-plum-one.vercel.app/api/proba`, {
+    //axios.get(`http://192.168.31.85:8000/api/proba`, {
+      //  headers: {Authorization: `Bearer ${token}`},
+     headers: {'Content-Type': 'application/json'},
+    }).then((res) =>{
+      //       //  console.log( 'data= ',res.data)
+      Alert.alert('версия='+ JSON.stringify(res.data))
+    dispatch({ type: 'ppUser',  payload: "версия=" + JSON.stringify(res.data)});  
+    }
+             )
+   
+  
+
+
+  }
+
+
 
 // только  вначале выполняется  при изменении error или аутинфикации
   useEffect(() => {
@@ -72,7 +94,7 @@ const LoginScreen = ({navigation}: Props) => {
  <View style={tw`flex-1 items-center justify-center bg-white`}>
 
      <View   style={tw`w-70% `} >
-  <Text  style={tw`text-5xl font-bold mb-6 text-center text-black`} >
+  <Text  style={tw`text-5xl font-bold    my-8 text-center text-black`} >
       Login
   </Text>
   <TextInput
@@ -80,14 +102,14 @@ const LoginScreen = ({navigation}: Props) => {
    value={email}
     //placeholderTextColor={'#000'}
      onChangeText={text => setEmail(text)}
-  style={   tw` w-full h-35px border border-2   rounded-md  px-2 my-2 mb-4  text-black`
+  style={   tw` w-full  text-[20px]  border border-2   rounded-md  px-2 py-1   my-2 mb-4   text-black`
   //  tw`w-full h-35px rounded-3 border  border-2 border-green-300  bg-white  px-2 my-2 mb-4 `
   }
     
   />
   <TextInput
     placeholder="Enter your password"
-    style={tw`w-full h-35px border border-2   rounded-md  px-2 my-2 mb-4  text-black`}
+    style={tw`w-full  text-[20px]  border border-2   rounded-md  px-2 py-1   my-2 mb-4   text-black`}
      value={password}
   //  placeholderTextColor={'#000'}
   onChangeText={text => setPassword(text)}
@@ -101,6 +123,17 @@ const LoginScreen = ({navigation}: Props) => {
     >
       Login
     </Text>
+    </TouchableOpacity>
+
+    <TouchableOpacity  style={tw`mt-6 `}    >
+    <Text
+    style={tw`w-full text-[20px]  font-medium   text-white  text-center rounded-md  p-2  bg-black`}  
+      
+      onPress={subb}
+    >
+      Версия
+    </Text>
+
    
   </TouchableOpacity>
   <Text  style={tw`pt-3 text-black`}  

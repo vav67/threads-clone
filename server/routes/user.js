@@ -43,6 +43,7 @@ router.route("/get-user/:id").get(isAuthenticatedUser, getUser);
 
 
 router.route("/update-avatar").put(isAuthenticatedUser, updateUserAvatar);
+
 router.route("/update-profile").put(isAuthenticatedUser, updateUserInfo);
 
 

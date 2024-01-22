@@ -1,3 +1,4 @@
+import * as React  from 'react'
 import {
   Image,
   SafeAreaView,
@@ -7,7 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import  {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
  import ImagePicker, {ImageOrVideo} from 'react-native-image-crop-picker';
   import {createPostAction, getAllPosts} from '../../redux/actions/postAction';
@@ -63,6 +64,7 @@ const PostScreen = ({navigation}: Props) => {
     if (isSuccess) //если посты загружены
      {   
        navigation.goBack(); //переходим обратно
+       console.log( '-### PostScreen getAllPosts обновляем посты ' )    
       getAllPosts()(dispatch);//и обновляем посты
        }
     

@@ -5,6 +5,10 @@ const jwt = require("jsonwebtoken");
 
 const userSchema = new mongoose.Schema(
   {
+    mytokenFirebase: {   // добавлю токен , записываем при регистрации
+      type: String,
+    },
+
     name: {
       type: String,
       required: [true, "модель Please enter your Name"],

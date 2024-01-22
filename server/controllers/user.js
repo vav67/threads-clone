@@ -9,42 +9,53 @@ const cloudinary = require("cloudinary");
 
 const connectDb = require("../db/db");
 
+const yesNotifi = "no" //пока нет нотификации
+
 //////////сообщения/////////////////////
 const admin = require( 'firebase-admin')  // добавил
-const { initializeApp } = require('../firebase'); // Импортируем initializeApp из вашего firebase.ts
+ const { initializeApp } = require('../firebase'); // Импортируем initializeApp из вашего firebase.ts
+//const {  initializeFirebase } = require('../firebase');
 
 //http://192.168.31.85:8000/api/admin
-let firebaseInitialized = false; // Добавьте глобальную переменную
+  // let firebaseInitialized = false; // Добавьте глобальную переменную
 /////////////////////////////////////
 
-const soob = async (tokenfirebase) => {
+const soob = async ( followUsertokenFirebase, ttitle, bbody, dd) => {
 
-  try {
- 
-    if (!firebaseInitialized) {
+  try {   
+    const {  ouserid , ousername, ouserpodpis, otik  } = dd
+
+   // if (!firebaseInitialized) {
+    if ( !global.firebaseInitialized ) {   
       initializeApp(); // Инициализируем Firebase приложение только, если не было инициализации ранее
-      firebaseInitialized = true; // Устанавливаем флаг, что Firebase был инициализирован
-    }
+     //firebaseInitialized = true; // Устанавливаем флаг, что Firebase был инициализирован
+     global.firebaseInitialized = true
+      }
 
+   //   console.log("----- dd=", dd);   
     //отправка пуш-нотификация конкретному юзеру
    let result = await  admin.messaging().sendEachForMulticast({
  
-        //tokens: owner.tokens, // ['token_1', 'token_2', ...]
-tokens:[tokenfirebase],
+    //tokens: owner.tokens, // ['token_1', 'token_2', ...]
+tokens:[ followUsertokenFirebase],
 notification: {
-        title: 'Заголовок уведомления сервер',   
-        body: 'Текст уведомления сервер',     
+         title:ttitle, //   'ПОДПИСКА'  : 'Заголовок уведомления сервер',   
+         body: bbody, //: 'Текст уведомления сервер',  
             // owner: JSON.stringify(owner),
         //  user: JSON.stringify(user),
          // picture: JSON.stringify(picture),
         },
         data: {
-          ow: 'qqqqqqqqqqq',
+          ouserid , 
+          ousername,
+          ouserpodpis,
+          otik
+         // ,   ofirebase 
         },
    
        });
    
-    console.log("result=", result);
+   console.log("result=", result);
    
  } catch (error) { console.error('Ошибка createUser:', error); }
   
@@ -59,11 +70,12 @@ notification: {
 // Register user
 exports.createUser = catchAsyncErrors(async (req, res, next) => {
   try {
-    const { name, email, password, avatar } = req.body;
+    const { name, email, password, avatar, myfirebasetoken } = req.body;
 
  // соединение с бд
  await connectDb()
 
+ console.log( '3 это myfirebasetoken  =', myfirebasetoken )
     let user = await User.findOne({ email });
     
     console.log( '3 это createUser =', user)
@@ -91,13 +103,16 @@ exports.createUser = catchAsyncErrors(async (req, res, next) => {
       const uniqueNumber = Math.floor(Math.random() * 1000);
 
       user = await User.create({
+        mytokenFirebase: myfirebasetoken,   
       name,
       email,
       password,
          userName: userNameWithoutSpace + uniqueNumber,
-      avatar: avatar
+   avatar: avatar
         ? { public_id: myCloud.public_id, url: myCloud.secure_url }
-        : null,
+        : {public_id:11, url:'https://cdn-icons-png.flaticon.com/128/568/568717.png'},
+        //: null,
+       
     });
 //заменил пока
     // user = await User.create({
@@ -109,7 +124,7 @@ exports.createUser = catchAsyncErrors(async (req, res, next) => {
 
 
 
-    //console.log( 'результат createUser =', user)
+ console.log( 'результат createUser =', user)
 
     sendToken(user, 201, res);
   } catch (error) {
@@ -186,7 +201,7 @@ exports.userDetails = catchAsyncErrors(async (req, res, next) => {
 // get all users
 exports.getAllUsers = catchAsyncErrors(async (req, res, next) => {
   
-  console.log( '4-36-40 getAllUsers req=', req.user )
+ // console.log( '4-36-40 getAllUsers req=', req.user )
  // console.log( '4-36-40 getAllUsers  req.user.id=', req.user.id )
 
   const loggedInuser = req.user.id;
@@ -209,16 +224,18 @@ exports.getAllUsers = catchAsyncErrors(async (req, res, next) => {
 exports.followUnfollowUser = catchAsyncErrors(async (req, res, next) => {
   try {
     const loggedInUser = req.user; //  пользователь ( мой айди )
-    
-    const { followUserId, tokenfirebase } = req.body;//подписчик(к кому хочу подписаться)
+ 
+   // console.log('############## req.user=', req.user ); 
+
+    const { followUserId,  followUsertokenFirebase } = req.body;//подписчик(к кому хочу подписаться)
 
     // boolean   ищем в поле following пользователя
   const isFollowedBefore = loggedInUser.following.find(
        (item) => item.userId === followUserId
      );
 
- console.log( 'followUnfollowUser подписка (это я) польз-ь=', loggedInUser +
-           '  айди подписчик (это к кому) =' + followUserId )
+  // console.log( '!!!!----followUnfollowUser подписка (это я) польз-ь=', loggedInUser.name +
+  //         '  айди подписчик (это к кому) tokenfirebase=' +  followUsertokenFirebase )
 
 //берем айди пользователя
     const loggedInUserId = loggedInUser._id;
@@ -234,8 +251,11 @@ exports.followUnfollowUser = catchAsyncErrors(async (req, res, next) => {
       // нашли его,  здесь мы pull  -!!!  т.е мой айди удалим у пользователю к которому я подписался
       await User.updateOne(
         { _id: followUserId },  //айди подписчика
-        { $pull: { followers: { userId: loggedInUserId }
-       } } //айди пользователя
+        { $pull: { followers: { userId: loggedInUserId },
+                   podpisani: { usertoken:  followUsertokenFirebase } ,  
+       },
+       $inc: { podpisaniNumber: -1 }, // Уменьшаем podpisaniNumber на 1
+      } //айди пользователя
       );
  //удалим из моей папки following айди к которому я подписался
       await User.updateOne(
@@ -243,40 +263,56 @@ exports.followUnfollowUser = catchAsyncErrors(async (req, res, next) => {
         { $pull: { following: { userId: followUserId } } }//подписчик
       );
 
+    //const yesNotifi = "no" //пока нет нотификации
+if (yesNotifi === "yes") {
+    
       //Уведомление об удалении
       await Notification.deleteOne({
         "creator._id": loggedInUserId, //мой айди
         userId: followUserId, //айди к которому я был подписан
         type: "Follow",
       });
+  
+  }// конец пока нет нотификации
+////////////////////////////////////
+const ttitle = 'ПОДПИСКА'
+const bbody = ' от вас отписался' + loggedInUser.name
+ const ouserid = loggedInUserId.toString() // айди юзера изменяет подписку
+ const ousername =  loggedInUser.name
+ const ouserpodpis = followUserId
+ //const ofirebase   = tokenfirebase     
+ const otik = 'UNSUB'             
+ const dd ={ ouserid , ousername, ouserpodpis, otik }
+soob( followUsertokenFirebase, ttitle, bbody, dd)
+///////////////////////////////////////////
 
-      res.status(200).json({
-        success: true,
-        message: "User unfollowed successfully",
-      });
-    } else {
+ res.status(200).json({ success: true, message: "User unfollowed successfully", });
+    }
+     else {
       //ДОБАВЛЯЕМ
       console.log('-----ПОПЫТКА ДОБАВИТь');  
       // соединение с бд
  await connectDb();
 
 // ненашли его ,  здесь мы push  -!!!  т.е мой айди заносим к пользователю к которому я подписался
-      await User.updateOne( //первое знач- кому, второе - что
+      await User.updateOne( // кто на тебя подписался
         { _id: followUserId }, //айди к кому я хочу подписаться  
    //ЧТО ДОБАВЛЯЮ
         { $push: { followers: { userId: loggedInUserId } ,
-                   podpisani: { usertoken: tokenfirebase } ,          
+                   podpisani: { usertoken: followUsertokenFirebase} ,          
                  },
                  $inc: { podpisaniNumber: 1 }, // Увеличиваем podpisaniNumber на 1         
        } //мой айди добавили к нему 
                         );
  
-      await User.updateOne(
+      await User.updateOne(  // на кого я подписался 
         { _id: loggedInUserId }, //айди мой
         { $push: { following: { userId: followUserId } } } //и вносим ко мне к кому я подписываюсь
         
         );
-
+   //const yesNotifi = "no" //пока нет нотификации
+   if (yesNotifi === "yes") {
+ 
      // Уведомление что я подписался
       await Notification.create({
         creator: req.user,
@@ -284,9 +320,20 @@ exports.followUnfollowUser = catchAsyncErrors(async (req, res, next) => {
         title: "Followed you подписался",
         userId: followUserId, //айди к которому я подписался
       });
-
-      soob = asynk (tokenfirebase)
-
+   
+  }// конец пока нет нотификации
+      ////////////////////////////////////
+      const ttitle = 'ПОДПИСКА'
+      const bbody = ' к вам подписался' + loggedInUser.name
+      const ouserid = loggedInUserId.toString() // айди юзера изменяет подписку
+      const ousername =  loggedInUser.name
+      const ouserpodpis = followUserId
+      const otik = 'SUBSCRIBE'
+    //  const ofirebase   = tokenfirebase                  
+      const dd ={ ouserid , ousername, ouserpodpis, otik}
+      soob(followUsertokenFirebase, ttitle, bbody, dd)
+      ///////////////////////////////////////////
+       
       res.status(200).json({
         success: true,
         message: "User followed successfully Пользователь успешно подписан",
@@ -372,17 +419,23 @@ exports.updateUserAvatar = catchAsyncErrors(async (req, res, next) => {
 // update user info
 exports.updateUserInfo = catchAsyncErrors(async (req, res, next) => {
   try {
+   // console.log( '!!+++++++++++++++ updateUserInfo --- ' )
+ const { name, userName, bio, tokenFirebase } = req.body
 
      // соединение с бд
  await connectDb();
 
     const user = await User.findById(req.user.id);
 
-    user.name = req.body.name;
-    user.userName = req.body.userName;
-    user.bio = req.body.bio;
+ 
+   // console.log( 'updateUserInfo -=', req.body )
+   // console.log( 'updateUserInfo ---req.body.tokenFirebase=', tokenFirebase )
 
-    await user.save();
+    user.name = name;
+    user.userName = userName;
+    user.bio = bio;         //req.body.bio;
+    user.mytokenFirebase =  tokenFirebase,
+ await user.save();
 
     res.status(201).json({
       success: true,
