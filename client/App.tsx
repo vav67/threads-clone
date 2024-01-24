@@ -60,7 +60,7 @@ function App() {
 
   const dispatch = useDispatch()
 
-  const ww = (data )  => {
+  const ww = (data:any )  => {
   /////  getAllPosts()(dispatch) 
     if (posts.length > 0) {  //если посты есть
       console.log( '-@@@@ -SoobLike--постов=', posts.length)
@@ -84,11 +84,13 @@ SoobSubscribe({ datapodpiska, user, users  })(dispatch);
 
   useEffect(() => { //сообщение лайк
     console.log( '*@@@@@@@@ ---Изменилась data=',ddata )
+    dispatch({ type: 'ppUser',  payload: "сработало ЛАЙК"  });
     ww(ddata )
     },[ddata]) 
 
     useEffect(() => { //сообщение о подписке
       console.log( '*@@@@@@@@ ---Изменилась datapodpiska=',datapodpiska )
+      dispatch({ type: 'ppUser',  payload: "сработало ОПОДПИСКЕ" ,  });
       subscribe(datapodpiska )
       },[datapodpiska]) 
 
@@ -124,7 +126,9 @@ SoobSubscribe({ datapodpiska, user, users  })(dispatch);
   const getPushData =async (remoteMessage:any) => {
 
    const { notification, data } = remoteMessage;
- 
+   
+   dispatch({ type: 'ppUser',  payload: "пришло---"+ notification.title ,  });
+
  if (notification.title === 'ЛАЙК' ) {
   setDdata(data)  
   console.log( '--- ПРИШЕЛ СООБЩЕНИЕ ---- постов=', posts.length)
@@ -179,6 +183,7 @@ useEffect(() => {
 
   if (isAuthenticated)
   {
+    
     console.log( myfirebasetoken,
       '= myfirebasetoken ---АВТОРИЗАЦИЯ----user.mytokenFirebase=',
                  user.mytokenFirebase)  
@@ -190,13 +195,16 @@ useEffect(() => {
   
    }
  
-   
-     if ( myfirebasetoken !== user.mytokenFirebase) {
- console.log( myfirebasetoken,
-   '= myfirebasetoken!!==авторизован (несовпад) ===user.mytokenFirebase=',
-              user.mytokenFirebase)    
-    getToken() //получаем токен
-     }
+//Это условие проверяет, что myfirebasetoken не является undefined и не равен null, 
+//и только затем сравнивает его с user.mytokenFirebase
+
+   if (myfirebasetoken !== undefined && myfirebasetoken !== null && myfirebasetoken !== user.mytokenFirebase) {
+    console.log(myfirebasetoken, '= myfirebasetoken!!==авторизован (несовпад) ===user.mytokenFirebase=', user.mytokenFirebase);
+    getToken(); // Получаем токен
+  }
+
+ 
+
   }
 
 }, [isAuthenticated]);
@@ -225,12 +233,13 @@ useEffect(() => {
  const AppStack = () => {
 
  ////  const [isLogin, setIsLogin] = React.useState(false);
-     const {isAuthenticated, isloading, loading, pproba, 
+     const {isAuthenticated,   loading, pproba, 
                    myfirebasetoken,
           user, token } = useSelector((state: any) => state.user);
   const dispatch =useDispatch()
+ 
 
- // console.log( isAuthenticated,'=isAuthenticated ( ИТАК ВНАЧАЛЕ)   1App  isloading=', isloading) 
+  ///////-----  console.log( isAuthenticated,'=isAuthenticated ( ИТАК ВНАЧАЛЕ)   1App  token=', token) 
 
 //   React.useEffect(() => {
 //  //  Store.dispatch(loadUser());
@@ -241,22 +250,24 @@ useEffect(() => {
 //   }, [ ]);
  
  
- React.useEffect(() => {
-  //  Store.dispatch(loadUser());
-       loadUser()(dispatch)       
-       console.log('-------------запускаю getAllUsers() ')
-    getAllUsers()(dispatch) // здесь state.isLoading = true в false
+// React.useEffect(() => {
+//333   useEffect(() => {
+//   //  Store.dispatch(loadUser());
+//   //console.log('-------------запускаю  loadUser() ')     
+//  //2222222  loadUser()(dispatch)       
+//    ///////-----     console.log('-------------запускаю getAllUsers() ')
+//   ///////-----  getAllUsers()(dispatch) // здесь state.isLoading = true в false
  
-   }, [ ]);
+//    }, [ ]);
 
 
 
 
 
 
- // console.log(isAuthenticated ,'=isAuthenticated (  2ДАЛЕЕ  ) loading=', loading)
+ ///////-----   console.log(isAuthenticated ,'=isAuthenticated (  2ДАЛЕЕ  ) loading=', loading)
 
-//console.log( '&&&&===========App==== userr=', userr) 
+  //console.log( '&&&&===========App==== myfirebasetoken=', myfirebasetoken) 
 
  return (
   <>
@@ -273,13 +284,13 @@ useEffect(() => {
 
    { (loading) ? (
    <>
-       <Text  style={tw`text-[#f3f3f3]`}> Loading = {pproba} </Text>
+       <Text  style={tw`text-[#f3f3f3]`}> Loading   </Text>
        <Text  style={tw`text-black`}> Добавить таймер попыток соединения </Text>
          <Loader />
      </>      
     ) : (
       <>
-      <Text  style={tw`text-black`}> pp = {pproba} </Text>
+      
         {isAuthenticated ? (
           <NavigationContainer>
             <Main />

@@ -1,3 +1,4 @@
+import * as React  from 'react';
 import {
   View,
   Text,
@@ -6,8 +7,10 @@ import {
   FlatList,
   Image,
   RefreshControl,
+  ScrollView ,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+ 
+import   {useEffect, useState} from 'react';
 import {getNotifications} from '../../redux/actions/notificationAction';
 import {useDispatch, useSelector} from 'react-redux';
 import { StatusBar } from 'native-base';
@@ -38,7 +41,11 @@ const NotificationScreen = ({navigation}: Props) => {
  // const [refreshing, setRefreshing] = useState(false);
   const {posts} = useSelector((state:any) => state.post);
 
-  const {token, users} = useSelector((state: any) => state.user);
+  const {token, users, pproba} = useSelector((state: any) => state.user);
+ 
+
+
+
  
 const [active, setActive] = useState(0);
   //const refreshingHeight = 100;
@@ -55,7 +62,7 @@ const [active, setActive] = useState(0);
   }, []);
   
   
-
+ 
 
 
   return (
@@ -66,10 +73,13 @@ const [active, setActive] = useState(0);
         <>
 
       <SafeAreaView>
+   
       <View style={tw`pl-3`}>
       <Text style={tw`text-black text-5 bg-[#707cec]`}>
                это   NotificationScreen   </Text>
        </View>
+
+
 
    <StatusBar 
    animated={true}
@@ -77,9 +87,12 @@ const [active, setActive] = useState(0);
    barStyle={ 'dark-content'}
    showHideTransition={ 'fade'}
        />
+
+<ScrollView> 
+  
           <View style = {tw`p-3`}>
-      <Text style = {tw`text-3xl font-700`}> Activity</Text>
-      <Text style = {tw`text-4 font-400`}> это кто на меня подписан</Text>
+      <Text style = {tw` text-black text-3xl font-700`}> Activity</Text>
+      <Text style = {tw`text-black text-4 font-400`}> это кто на меня подписан</Text>
 
       <View style = {tw`w-full flex-row my-3 justify-between`}>
                 {labels.map((label, index) => (
@@ -264,9 +277,33 @@ const [active, setActive] = useState(0);
             )
            }
   
-  
-  
            </View>
+
+            
+           
+           <View style={tw`pl-3`}>
+          
+      <Text style={tw`text-black text-5 bg-[#707cec]`}>
+               In pproba  </Text>
+               
+
+               {pproba &&
+              pproba.map((iptem:any, ii:number) => (
+                
+                <Text style={tw`text-black text-5 bg-[#707cec]`}   key={ii} >
+                =={iptem} </Text>
+            
+            
+              ))}
+           
+          <Text style={tw`text-black text-5 bg-[#707cec]`}>---------------------</Text>
+      
+       </View>
+       
+
+
+
+</ScrollView>
 
       </SafeAreaView>
 

@@ -1,3 +1,4 @@
+import * as React  from 'react';
 import {
   View,
   Text,
@@ -6,7 +7,7 @@ import {
   Image,
   FlatList,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
   import {useDispatch, useSelector} from 'react-redux';
 import {
   followUserAction,
@@ -189,12 +190,14 @@ const FollowerCard = ({navigation, route}: Props) => {
                     userId: user._id,
                     users,
                     followUserId: e._id,
+        tokenfirebase: user.mytokenFirebase,  //сам передаем токен для оповещения           
                   })(dispatch);
                 } else {
                   await followUserAction({
                     userId: user._id,
                     users,
                     followUserId: e._id,
+        tokenfirebase: user.mytokenFirebase,  //сам передаем токен для оповещения            
                   })(dispatch);
                 }
               } catch (error) { 

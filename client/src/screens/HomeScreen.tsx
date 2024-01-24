@@ -119,11 +119,11 @@ useEffect(() => {
 
 
 
-  // useEffect(() => {
-  //   console.log( '-### ??????????? HomeScreen getAllPosts посты ' )        
-  //   getAllPosts()(dispatch);
-  //  // getAllUsers()(dispatch);
-  // }, [dispatch]);
+    useEffect(() => {
+    console.log( '-### ??????????? HomeScreen getAllPosts посты ' )        
+     getAllPosts()(dispatch);
+   getAllUsers()(dispatch);
+   }, [dispatch]);
 
  // console.log( 'posts=', posts )
 
@@ -149,7 +149,7 @@ useEffect(() => {
 
   }
 
-//   console.log( '---HomeScreen   проверка  users=', users )
+   console.log( '---HomeScreen   проверка  users=', users )
 
   return (
     <>
@@ -167,6 +167,7 @@ useEffect(() => {
     (
   
     <SafeAreaView>      
+        <Text  style={tw`text-black`}> Постов = {posts?.length} </Text> 
             {/* <TouchableOpacity  onPress={()=>ppNotifi(user?.name) }   >
              <View style={tw`pl-3`} >
         <Text style={tw`text-black text-5 bg-[#707cec]`}>
@@ -174,6 +175,8 @@ useEffect(() => {
            <Text  style={tw`text-black`}> Постов = {posts?.length} </Text>    
          </View>
          </TouchableOpacity> */}
+     
+   
        <StatusBar 
         animated={true}
         backgroundColor={"#61dafb"}
@@ -183,8 +186,8 @@ useEffect(() => {
            <View style={tw`mb- 1 `}
        // !!!!!   сам    нижняя часть для последнего сообщения 
            >
-  
-              <FlatList
+ 
+                 <FlatList
               data={posts}
               showsVerticalScrollIndicator={false}
               renderItem={({item}) => (
@@ -192,9 +195,9 @@ useEffect(() => {
               )}
   
           />  
-       
+    
                 </View>
-  
+ 
       </SafeAreaView>
     ) 
 

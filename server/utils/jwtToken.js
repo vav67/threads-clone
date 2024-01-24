@@ -11,6 +11,13 @@ const sendToken = (user,statusCode,res) =>{
     secure: true,
    };
 
+/**
+ * SameSite: Параметр sameSite установлен в "none". Это необходимо, если
+ *  ваш сайт используется во фреймах или iframe. В противном случае, 
+ * для безопасности, лучше установить sameSite в "strict" или "lax".
+ * 
+ */
+
    //console.log( ' создали token в куки', )
    res.status(statusCode).cookie("token",token,options).json({
        success: true,

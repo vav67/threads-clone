@@ -23,6 +23,8 @@ const admin = require( 'firebase-admin')  // добавил
 const soob = async ( followUsertokenFirebase, ttitle, bbody, dd) => {
 
   try {   
+
+    console.log('-----выполняется ф-я soob начало');   
     const {  ouserid , ousername, ouserpodpis, otik  } = dd
 
    // if (!firebaseInitialized) {
@@ -34,6 +36,9 @@ const soob = async ( followUsertokenFirebase, ttitle, bbody, dd) => {
 
    //   console.log("----- dd=", dd);   
     //отправка пуш-нотификация конкретному юзеру
+
+    console.log('-----  ф-я soob отправка пуш-нотификация конкретному юзеру');   
+      
    let result = await  admin.messaging().sendEachForMulticast({
  
     //tokens: owner.tokens, // ['token_1', 'token_2', ...]
@@ -262,7 +267,7 @@ exports.followUnfollowUser = catchAsyncErrors(async (req, res, next) => {
         { _id: loggedInUserId },//айди пользователя
         { $pull: { following: { userId: followUserId } } }//подписчик
       );
-
+      console.log('-----прошло User.updateOne');  
     //const yesNotifi = "no" //пока нет нотификации
 if (yesNotifi === "yes") {
     
@@ -283,10 +288,12 @@ const bbody = ' от вас отписался' + loggedInUser.name
  //const ofirebase   = tokenfirebase     
  const otik = 'UNSUB'             
  const dd ={ ouserid , ousername, ouserpodpis, otik }
+ console.log('-----отправляем ф-ю soob');  
 soob( followUsertokenFirebase, ttitle, bbody, dd)
 ///////////////////////////////////////////
-
+console.log('-----вывод стат 200'); 
  res.status(200).json({ success: true, message: "User unfollowed successfully", });
+
     }
      else {
       //ДОБАВЛЯЕМ
@@ -304,12 +311,16 @@ soob( followUsertokenFirebase, ttitle, bbody, dd)
                  $inc: { podpisaniNumber: 1 }, // Увеличиваем podpisaniNumber на 1         
        } //мой айди добавили к нему 
                         );
+                        console.log('-----прошло podpi User.updateOne');  
  
       await User.updateOne(  // на кого я подписался 
         { _id: loggedInUserId }, //айди мой
         { $push: { following: { userId: followUserId } } } //и вносим ко мне к кому я подписываюсь
         
         );
+
+        console.log('-----прошло following User.updateOne');  
+
    //const yesNotifi = "no" //пока нет нотификации
    if (yesNotifi === "yes") {
  
@@ -331,13 +342,17 @@ soob( followUsertokenFirebase, ttitle, bbody, dd)
       const otik = 'SUBSCRIBE'
     //  const ofirebase   = tokenfirebase                  
       const dd ={ ouserid , ousername, ouserpodpis, otik}
+      console.log('-----отправляем подписку ф-ю soob'); 
       soob(followUsertokenFirebase, ttitle, bbody, dd)
       ///////////////////////////////////////////
-       
+      
+      console.log('-----и выводим  статус 200'); 
       res.status(200).json({
         success: true,
         message: "User followed successfully Пользователь успешно подписан",
       });
+
+
       }
   } catch (error) {
     console.error('сервер Ошибка ПОДПИСКИ followUnfollowUser:', error); // Выводим ошибку в консоль

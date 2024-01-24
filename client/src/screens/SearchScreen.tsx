@@ -31,8 +31,8 @@ const [data, setData] = useState(
     {
       name: '',
       userName: '',
-      avatar: {url:""},//сам заменю пока на
-     // avatar: {url: 'https://cdn-icons-png.flaticon.com/512/2811/2811806.png'},
+    //  avatar: {url:""},//сам заменю пока на
+      avatar: {url: 'https://cdn-icons-png.flaticon.com/128/568/568717.png'},
       followers: [],   //подписка
     },
   ]);
@@ -62,17 +62,17 @@ const [data, setData] = useState(
 //       ) 
 //           }, [ token // dispatch
 //                   ]);
-useEffect(() => {
-  //загружает всех пользователейиз базы данных через getAllUsers state.users
-          getAllUsers()(dispatch);
-}, [dispatch]);
+//в App добавил/ useEffect(() => {
+//в App добавил/   //загружает всех пользователейиз базы данных через getAllUsers state.users
+//в App добавил/           getAllUsers()(dispatch);
+//в App добавил/ }, [dispatch]);
 
 useEffect(() => {
          if (users) {
-  // console.log( 'useEffect users=',users)       
+   console.log( '**************useEffect users=',users)       
           setData(users)
            }
-}, [users]);
+}, [users  ]);
 
 
  //поиск
@@ -95,6 +95,7 @@ const filteredUsers =
 
   // console.log( 'tokenfirebase=', tokenfirebase)    
 
+  console.log( 'data=', data)    
 
   return (
     <>
@@ -134,6 +135,7 @@ renderItem = {({item}) =>{
 //нажимаем на кнопку подписки ------------------            
  const handleFollowUnfollow = async (e: any) => {
               try {
+                dispatch({ type: 'ppUser',  payload: "нажимаем на кнопку подписки " ,  });        
                 //проверка совпадения айди
                 if (e.followers.find((i: any) => i.userId === user._id)) {
                   await unfollowUserAction({  //отписка

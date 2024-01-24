@@ -57,11 +57,11 @@ export const loadUser = () => async (dispatch: Dispatch<any>) => {
     //const jsonValue = await AsyncStorage.getItem('user');
    //4-32-21 заменим на 
    const token = await AsyncStorage.getItem('token');
-   const firebasetoken = await AsyncStorage.getItem('firebasetoken'); // сам  токен от  Firebase
+   let firebasetoken  = await AsyncStorage.getItem('firebasetoken'); // сам  токен от  Firebase
 
-  //  if (firebasetoken === null) {
-   
-  // }
+    if (firebasetoken === null) {
+      firebasetoken =  "aaaaa"
+    }
    ///////////////////////////////////////////////////////////
   if (token === null) {
     // Токен не существует, предпринимаем необходимые действия
@@ -127,7 +127,7 @@ export const loadUser = () => async (dispatch: Dispatch<any>) => {
 export const loginUser =
   (email: string, password: string) => async (dispatch: Dispatch<any>) => {
    
-    //console.log( '4  client loginUser email=', email + ' password='+ password )
+   console.log( '4  client loginUser email=', email + ' password='+ password )
 
     try {
       dispatch({    type: 'userLoginRequest',       });
@@ -142,11 +142,23 @@ export const loginUser =
       const config = {headers: {'Content-Type': 'application/json'}};
 
    //можно сделать отправка пароля по эектронной почте
-   // console.log( '4.1 login =', `${URI}/login`)
+    console.log( '4.1 login =', `${URI}/login`)
+
       const {data} = await axios.post( `${URI}/login`, 
            {email, password},
         config,
       );
+
+      if (data.token) {
+        await AsyncStorage.setItem('token', data.token);
+      } else {
+        dispatch({ type: 'ppUser',  payload: "из запроса /login нет токена?? ",  });        
+        dispatch({
+          type: 'userLoginFailed',
+          payload: 'Странно, но нет токена',
+        });
+      }
+
 
     //  console.log( '4   это loginUser data=', data)
     const firebasetoken = await AsyncStorage.getItem('firebasetoken'); // сам  токен от  Firebase
@@ -157,22 +169,30 @@ export const loginUser =
               payload:{  
                 user: data.user,    //загружаем юзера
                  myfirebasetoken: firebasetoken,
+                 token: data.token, //сам добавил токен (или можно при аутенфикац 
+                 // в App доставать через AsyncStorage.setItem - что это безопаснее )
               }
             })
-
-
-
-      dispatch({ type: 'ppUser',  payload: "все ок пароля и почты",  });
-
 
       //4-27-43 заменим const user = JSON.stringify(data.user)  
 //сохраним в хранилище пользователя
      //4-27-43 заменим AsyncStorage.setItem('user', user); 
   // на
-       if (data.token) {
-         await AsyncStorage.setItem('token', data.token);
-       }
+  //    перенес чуть выше сам 
+  //if (data.token) {
+  //   await AsyncStorage.setItem('token', data.token);
+  // } else {
+        
+  //   dispatch({
+  //     type: 'userLoginFailed',
+  //     payload: 'Странно, но нет токена',
+  //   });
+  // }
+
    
+  dispatch({ type: 'ppUser',  payload: "все ок пароля и почты",  });
+
+
     } catch (error: any) {
 
         console.error('Ошибка экшен loginUser:', error);  
@@ -205,7 +225,9 @@ export const logoutUser = () => async (dispatch: Dispatch<any>) => {
 export const getAllUsers = () => async (dispatch: Dispatch<any>) => {
   try {
 
-   // console.log('------(state.isLoading = true)--экшен getAllUsers '); 
+    dispatch({ type: 'ppUser',  payload: "---экшен getAllUsers",  });
+
+   console.log('------(state.isLoading = true)--экшен getAllUsers '); 
 
     dispatch({  type: 'getUsersRequest',  });
 
@@ -213,22 +235,24 @@ export const getAllUsers = () => async (dispatch: Dispatch<any>) => {
 
     const token = await AsyncStorage.getItem('token');
 
+    console.log('-------экшен getAllUsers----------token=',token); 
+
     const {data} = await axios.get(`${URI}/users`, {
       headers: {Authorization: `Bearer ${token}`},
     });
 
- //   console.log('экшен getAllUsers -users state.isLoading :data.users=', data.users); 
+    console.log('экшен getAllUsers -users state.isLoading :data.users=', data.users); 
 
     dispatch({ type: 'getUsersSuccess',   payload: data.users,   });
 
   } catch (error: any) {
-     
+       dispatch({ type: 'ppUser',  payload:  'getAllUsers ОШИБКА '+ error.response.data.message,  });
     dispatch({ 
       type: 'getUsersFailed',
       payload: error.response.data.message,
     });
     
-    dispatch({ type: 'ppUser',  payload: error.response.data.message,  });
+  
 
 console.error('Ошибка экшен getAllUsers :', error.response.data.message   )// error);
     
@@ -278,6 +302,8 @@ export const followUserAction =
  dispatch({ type: 'subscribeUser',   payload: followUserId,    })
 } //конец только при релизе 
  
+dispatch({ type: 'ppUser',  payload: "user подписка" ,  });
+
    //Ты нажимаешь и отображает на кого подписан теперь
  const updatedUsers = users.map((userObj: any) => userObj._id === followUserId
  ? { //нашел на кого подписываюсь
@@ -295,7 +321,9 @@ export const followUserAction =
      await axios.put( `${URI}/add-user`,  {followUserId , followUsertokenFirebase },
         {  headers: { Authorization: `Bearer ${token}`, },   },
       );
-      
+   
+      dispatch({ type: 'ppUser',  payload: "выполнен запрос подписки на add-user" ,  });    
+
     } catch (error) {
       console.log('Error following user:', error);
     }
@@ -334,13 +362,15 @@ export const unfollowUserAction =
 );
 
  dispatch({ type: 'getUsersSuccess',   payload: updatedUsers,   })
+ 
+ dispatch({ type: 'ppUser',  payload: "user ОТПИСКА" ,  });
 
  //console.log(  '=ОТПИСКА запрос на add-user '  )
 
      await axios.put( `${URI}/add-user`,  {followUserId,  followUsertokenFirebase},
          { headers: { Authorization: `Bearer ${token}`, },  },
      );
-
+     dispatch({ type: 'ppUser',  payload: "выполнен запрос ОТПИСКИ на add-user" ,  });
 
     } catch (error) {
       console.log('Error following user:', error);
@@ -367,6 +397,10 @@ export const unfollowUserAction =
    //   console.log (  '+++++++++++++ЭКШЕНЫ usertokenFirebase  tokenFirebase->', tokenFirebase  ) 
     // сохраним токен Firebase в ХРАНИЛИЩЕ
     await AsyncStorage.setItem('firebasetoken', tokenFirebase) 
+    dispatch({ type: 'ppUser',  payload: "сохранили токен Firebase в ХРАНИЛИЩЕ" ,  });
+ 
+    dispatch({ type: 'getusertokenFirebase',   payload: tokenFirebase,    });
+
     const token = await AsyncStorage.getItem('token');
        
   // console.log (  'итак name=', name, '  userName=',userName,  '  bio=',bio   )   
@@ -375,11 +409,6 @@ export const unfollowUserAction =
            { name, userName,  bio,
                tokenFirebase:tokenFirebase,  },
         { headers: {Authorization: `Bearer ${token}` }, } )
-                  
-        
-
-  dispatch({ type: 'getusertokenFirebase',   payload: tokenFirebase,    });
-  
     } catch (error) {
       console.error('Ошибка сохранения fbtokendata:', error) 
       
@@ -387,12 +416,14 @@ export const unfollowUserAction =
   };
    
 
+
+  
   //SoobSubscribe({ data, posts })(dispatch); 
   export const SoobSubscribe =({ datapodpiska, user, users  }: { 
       datapodpiska: any; user: any; users: any;   })=> async (dispatch: Dispatch<any>) => {
     try {
     console.log (   '   ===============ЭКШЕНЫ SoobSubscribe  datapodpiska->', datapodpiska  ) 
- 
+    dispatch({ type: 'ppUser',  payload: "сработал экшен SoobSubscribe"  ,  });
     const { ouserid , ousername, ouserpodpis, otik } = datapodpiska
   //   users.map((userObj: any) => userObj._id === ouserid
   //    ? 
@@ -406,7 +437,7 @@ export const unfollowUserAction =
 // ouserid - айди кто подписывается
 // ouserpodpis -айди на кого подписывается
  
- 
+dispatch({ type: 'ppUser',  payload: "Пришли в экшены СООБЩЕНИЯ об SoobSubscribe" ,  });
   // это подписка, пришло от того юзера кто подписался ()
 
      if ( otik === 'SUBSCRIBE'   ) { //это добавляю кто на меня подписался

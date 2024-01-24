@@ -37,9 +37,24 @@ const intialState = {
   myfirebasetoken: "", //сам из хранилища
   error: null,
   //ненужен tokenfirebase:"ss", //сам добавил токен полученный от Firebase
-   pproba:"start",  //сам происходящие действия
- //  soob:{},  //сам пришло сообщение
+  // pproba:"start",  //сам происходящие действия
+  pproba:["start"], 
+  //  soob:{},  //сам пришло сообщение
 };
+
+
+const getCurrentDateTime = () => {
+  const now = new Date();
+  const day = now.getDate().toString().padStart(2, '0');
+  const month = (now.getMonth() + 1).toString().padStart(2, '0');
+  const year = now.getFullYear().toString().substring(2);
+  const hours = now.getHours().toString().padStart(2, '0');
+  const minutes = now.getMinutes().toString().padStart(2, '0');
+  const seconds = now.getSeconds().toString().padStart(2, '0');
+
+  return `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`;
+};
+
 
 const userRegisterRequest = createAction('userRegisterRequest')
 const userRegisterSuccess = createAction('userRegisterSuccess')
@@ -149,8 +164,7 @@ export const userReducer = createReducer(intialState,
   // },
   .addCase(userLoadSuccess, (state, action:any) => {
      
-    state.loading = false;
-   state.isAuthenticated = true;
+   
    //state.user = action.payload; был этот
    //на
    state.user = action.payload.user;
@@ -158,11 +172,15 @@ export const userReducer = createReducer(intialState,
  
  state.token = action.payload.token;  //4-40-50 добавил токен
    if ( action.payload.myfirebasetoken === null ) {
-   state.myfirebasetoken = ""
+   state.myfirebasetoken = "xxxx"
    } else {
     state.myfirebasetoken = action.payload.myfirebasetoken
    }
    
+ state.loading = false;
+   state.isAuthenticated = true;
+
+
   })
 
 
@@ -204,7 +222,7 @@ if ( action.payload.myfirebasetoken === null ) {
    state.myfirebasetoken = action.payload.myfirebasetoken
   }
  
-
+  state.token = action.payload.token; //сам добавил - пока так
 
 })
 
@@ -250,7 +268,7 @@ if ( action.payload.myfirebasetoken === null ) {
 })
   // userLogoutFailed: state => { state.loading = false; },
 
-
+  
 
   .addCase(getUsersRequest, (state, action) => {
               // console.log( 'getUsersRequest  user.state.isLoading = true')
@@ -305,16 +323,22 @@ state.users = action.payload;
  
 
 .addCase(getusertokenFirebase, (state, action:any) => {
- // console.log( '=== РЕДЮСЕР getusertokenFirebase=', action.payload )  
+   console.log( ' РЕДЮСЕР getusertokenFirebase=', action.payload )  
  state.myfirebasetoken = action.payload ;  //сам добавил токен полученный от Firebase
 })
 
 
 // сам для поиска ошибок
  .addCase(ppUser, (state, action:any) => {
+
+
   // console.log( '=== РЕДЮСЕР =', action.payload )
-   state.pproba = action.payload ;  //сам добавил токен полученный от Firebase
- })
+ ////  state.pproba = action.payload ;  //сам добавил токен полученный от Firebase
+ const dateTimeString = getCurrentDateTime();
+state.pproba = [...state.pproba, `${action.payload}--${dateTimeString}`];
+
+
+  })
 
  
  

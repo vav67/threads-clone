@@ -10,7 +10,7 @@ import {
 import  {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {Dimensions} from 'react-native';
-import {loadUser, logoutUser} from '../../redux/actions/userAction';
+import {  logoutUser} from '../../redux/actions/userAction';
 import PostCard from '../components/PostCard';
 import tw from 'twrnc';
 
