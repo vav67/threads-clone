@@ -232,7 +232,13 @@ exports.getAllUsers = catchAsyncErrors(async (req, res, next) => {
 // Follow and unfollow user 
 //  Подписаться и отписаться от пользователя
 
-exports.followUnfollowUser = catchAsyncErrors(async (req, res, next) => {
+exports.followUnfollowUser = catchAsyncErrors(async (req, res, next) => {  
+  /**
+   *  вы должны определить переменную mytokenFirebase перед началом блока try.
+   *  Таким образом, она будет видна во всей области функции. 
+   */
+  let mytokenFirebase; // Переменная определена в области видимости функции
+
   try {
     const loggedInUser = req.user; //  пользователь ( мой айди )
  
@@ -247,21 +253,24 @@ exports.followUnfollowUser = catchAsyncErrors(async (req, res, next) => {
  //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!   
 // найдем юзера к которому будем отсылать сообщение (возьмем свежие токены Firebase)
 //здесь забираем только одно поле , для быстрой связи
+//console.log('##############  ищем юзера по айди followUserId=', followUserId ); 
 let myFirebaseuser = await User.findOne({ _id: followUserId }).select('mytokenFirebase')
-
+//console.log('##############  находим его mytokenFirebase  myFirebaseuser=', myFirebaseuser); 
 //????????????????????????????????
 // а если нет такого пользователя или нет такого поля mytokenFirebase
 if (myFirebaseuser && myFirebaseuser.mytokenFirebase) {
   // Пользователь найден и имеет поле mytokenFirebase
-  const mytokenFirebase = myFirebaseuser.mytokenFirebase;
+  // const {mytokenFirebase} = myFirebaseuser ;
   // Теперь вы можете использовать mytokenFirebase по вашему усмотрению
+  mytokenFirebase = myFirebaseuser.mytokenFirebase
+
 } else {
   // Пользователь не найден или не имеет поля mytokenFirebase
-  const mytokenFirebase = 'myerror'
+  mytokenFirebase  = 'myerror'
   console.log("Пользователь не найден или не имеет поля mytokenFirebase");
 }
 
-
+console.log('##############  Итак   !myFirebaseuser=',  mytokenFirebase ); 
 
     // boolean   ищем в поле following пользователя
   const isFollowedBefore = loggedInUser.following.find(
@@ -277,7 +286,7 @@ if (myFirebaseuser && myFirebaseuser.mytokenFirebase) {
     // да он есть
     if (isFollowedBefore) {
 
-      console.log('---ЕСТЬ --ПОПЫТКА удалить');    
+    //  console.log('---ЕСТЬ --ПОПЫТКА удалить');    
     
  
       //УДАЛЯЕМ
@@ -295,7 +304,7 @@ if (myFirebaseuser && myFirebaseuser.mytokenFirebase) {
         { _id: loggedInUserId },//айди пользователя
         { $pull: { following: { userId: followUserId } } }//подписчик
       );
-      console.log('-----прошло User.updateOne');  
+    //  console.log('-----прошло User.updateOne');  
     //const yesNotifi = "no" //пока нет нотификации
 if (yesNotifi === "yes") {
     
@@ -316,7 +325,7 @@ const bbody = ' от вас отписался' + loggedInUser.name
  //const ofirebase   = tokenfirebase     
  const otik = 'UNSUB'             
  const dd ={ ouserid , ousername, ouserpodpis, otik }
- console.log('-----отправляем ф-ю soob');  
+// console.log('-----отправляем ф-ю soob');  
 // soob( followUsertokenFirebase, ttitle, bbody, dd)
 soob( mytokenFirebase, ttitle, bbody, dd)  
 ///////////////////////////////////////////

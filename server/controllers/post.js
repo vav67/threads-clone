@@ -134,6 +134,15 @@ exports.getAllPosts = catchAsyncErrors(async (req, res, next) => {
 
  // add or remove likes
 exports.updateLikes = catchAsyncErrors(async (req, res, next) => {
+
+/**
+   *  вы должны определить переменную tokenfb перед началом блока try.
+   *  Таким образом, она будет видна во всей области функции. 
+   */
+let tokenfb; // Переменная определена в области видимости функции
+
+
+
   try {
 
     console.log('---------------------------------------------------updateLikes  ')
@@ -157,11 +166,11 @@ let myFirebaseuser = await User.findOne({ _id: followUserId }).select('mytokenFi
 // а если нет такого пользователя или нет такого поля mytokenFirebase
 if (myFirebaseuser && myFirebaseuser.mytokenFirebase) {
   // Пользователь найден и имеет поле mytokenFirebase
-  const tokenfb = myFirebaseuser.mytokenFirebase;
+   tokenfb = myFirebaseuser.mytokenFirebase;
   // Теперь вы можете использовать mytokenFirebase по вашему усмотрению
 } else {
   // Пользователь не найден или не имеет поля mytokenFirebase
-  const tokenfb = 'myerror'
+   tokenfb = 'myerror'
   console.log("Пользователь не найден или не имеет поля mytokenFirebase");
 }
 
