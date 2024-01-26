@@ -271,16 +271,7 @@ useEffect(() => {
 
  return (
   <>
-    {/* <>
-      <StatusBar
-        animated={true}
-        backgroundColor={'#fff'}
-        barStyle={'dark-content'}
-        showHideTransition={'fade'}
-      />
-    </>    {isloading ? (  */
-   //   {(isloading !== false) ? (  
-    }
+
 
    { (loading) ? (
    <>

@@ -142,14 +142,14 @@ renderItem = {({item}) =>{
                     userId: user._id,
                     users,
                     followUserId: e._id,
-                    tokenfirebase: user.mytokenFirebase,  //сам передаем токен для оповещения
+                    tokenfirebase: user.mytokenFirebase,  //сам (виртуал) передаем токен для оповещения
                   })(dispatch);
                 } else {
                   await followUserAction({   // подписка
                     userId: user._id, 
                     users,
                     followUserId: e._id,
-                    tokenfirebase: user.mytokenFirebase,  //сам передаем токен для оповещения
+                    tokenfirebase: user.mytokenFirebase,  //сам (виртуал)передаем токен для оповещения
                   })(dispatch);
                 }
     } catch (error) {  console.log(error, 'error');  }

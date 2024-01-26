@@ -145,8 +145,30 @@ exports.updateLikes = catchAsyncErrors(async (req, res, next) => {
 //совпало
 
  console.log( req.user.id, '  000=req.user.id========updateLikes post =', post ) 
+//---------------------------------------------
+// это было const tokenfb = req.user.mytokenFirebase 
+//----------------------------------------------------
+ //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!   
+// найдем юзера к которому будем отсылать сообщение (возьмем свежие токены Firebase)
+//здесь забираем только одно поле , для быстрой связи
+let myFirebaseuser = await User.findOne({ _id: followUserId }).select('mytokenFirebase')
 
-const tokenfb = req.user.mytokenFirebase 
+//????????????????????????????????
+// а если нет такого пользователя или нет такого поля mytokenFirebase
+if (myFirebaseuser && myFirebaseuser.mytokenFirebase) {
+  // Пользователь найден и имеет поле mytokenFirebase
+  const tokenfb = myFirebaseuser.mytokenFirebase;
+  // Теперь вы можете использовать mytokenFirebase по вашему усмотрению
+} else {
+  // Пользователь не найден или не имеет поля mytokenFirebase
+  const tokenfb = 'myerror'
+  console.log("Пользователь не найден или не имеет поля mytokenFirebase");
+}
+
+
+
+
+
 const likeInUser = req.user
 
 //console.log( likeInUser, ' = name ========  mytokenFirebase=', tokenfirebase) 

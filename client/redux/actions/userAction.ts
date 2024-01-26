@@ -316,9 +316,9 @@ dispatch({ type: 'ppUser',  payload: "user подписка" ,  });
  
   dispatch({ type: 'getUsersSuccess',   payload: updatedUsers,   })
 
-
+  //dispatch({ type: 'ppUser',  payload: "user ПОДПИСКА="+followUsertokenFirebase ,  });
 // console.log(  '=Подписка запрос на add-user '  )
-     await axios.put( `${URI}/add-user`,  {followUserId , followUsertokenFirebase },
+     await axios.put( `${URI}/add-user`,  {followUserId },
         {  headers: { Authorization: `Bearer ${token}`, },   },
       );
    
@@ -362,12 +362,13 @@ export const unfollowUserAction =
 );
 
  dispatch({ type: 'getUsersSuccess',   payload: updatedUsers,   })
- 
- dispatch({ type: 'ppUser',  payload: "user ОТПИСКА" ,  });
+
+ //!!!!!!!!!!!!!!!!данные токена виртуальны(и могли измениться)
+// dispatch({ type: 'ppUser',  payload: "user ОТПИСКА !!!!!!!!!!!!="+followUsertokenFirebase ,  });
 
  //console.log(  '=ОТПИСКА запрос на add-user '  )
 
-     await axios.put( `${URI}/add-user`,  {followUserId,  followUsertokenFirebase},
+     await axios.put( `${URI}/add-user`,  {followUserId },
          { headers: { Authorization: `Bearer ${token}`, },  },
      );
      dispatch({ type: 'ppUser',  payload: "выполнен запрос ОТПИСКИ на add-user" ,  });

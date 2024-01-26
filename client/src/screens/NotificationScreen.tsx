@@ -73,7 +73,9 @@ const [active, setActive] = useState(0);
         <>
 
       <SafeAreaView>
-   
+      <ScrollView> 
+
+        
       <View style={tw`pl-3`}>
       <Text style={tw`text-black text-5 bg-[#707cec]`}>
                это   NotificationScreen   </Text>
@@ -88,7 +90,7 @@ const [active, setActive] = useState(0);
    showHideTransition={ 'fade'}
        />
 
-<ScrollView> 
+
   
           <View style = {tw`p-3`}>
       <Text style = {tw` text-black text-3xl font-700`}> Activity</Text>

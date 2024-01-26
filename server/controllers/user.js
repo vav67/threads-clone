@@ -20,8 +20,10 @@ const admin = require( 'firebase-admin')  // добавил
   // let firebaseInitialized = false; // Добавьте глобальную переменную
 /////////////////////////////////////
 
-const soob = async ( followUsertokenFirebase, ttitle, bbody, dd) => {
+ 
 
+//const soob = async ( followUsertokenFirebase, ttitle, bbody, dd) => {
+  const soob = async ( mytokenFirebase, ttitle, bbody, dd) => {
   try {   
 
     console.log('-----выполняется ф-я soob начало');   
@@ -42,7 +44,8 @@ const soob = async ( followUsertokenFirebase, ttitle, bbody, dd) => {
    let result = await  admin.messaging().sendEachForMulticast({
  
     //tokens: owner.tokens, // ['token_1', 'token_2', ...]
-tokens:[ followUsertokenFirebase],
+//tokens:[ followUsertokenFirebase],
+tokens:[ mytokenFirebase ],
 notification: {
          title:ttitle, //   'ПОДПИСКА'  : 'Заголовок уведомления сервер',   
          body: bbody, //: 'Текст уведомления сервер',  
@@ -219,20 +222,46 @@ exports.getAllUsers = catchAsyncErrors(async (req, res, next) => {
    createdAt: -1,
    });
 
-  res.status(201).json({
-    success: true,
-    users,
-  });
+  res.status(201).json({ success: true,  users,  });
 });
 
-// Follow and unfollow user   Подписаться и отписаться от пользователя
+
+
+
+
+// Follow and unfollow user 
+//  Подписаться и отписаться от пользователя
+
 exports.followUnfollowUser = catchAsyncErrors(async (req, res, next) => {
   try {
     const loggedInUser = req.user; //  пользователь ( мой айди )
  
    // console.log('############## req.user=', req.user ); 
 
-    const { followUserId,  followUsertokenFirebase } = req.body;//подписчик(к кому хочу подписаться)
+   // const { followUserId,  followUsertokenFirebase } = req.body;//подписчик(к кому хочу подписаться)
+    const { followUserId } = req.body;//подписчик(к кому хочу подписаться)
+
+    // соединение с бд
+    await connectDb();
+
+ //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!   
+// найдем юзера к которому будем отсылать сообщение (возьмем свежие токены Firebase)
+//здесь забираем только одно поле , для быстрой связи
+let myFirebaseuser = await User.findOne({ _id: followUserId }).select('mytokenFirebase')
+
+//????????????????????????????????
+// а если нет такого пользователя или нет такого поля mytokenFirebase
+if (myFirebaseuser && myFirebaseuser.mytokenFirebase) {
+  // Пользователь найден и имеет поле mytokenFirebase
+  const mytokenFirebase = myFirebaseuser.mytokenFirebase;
+  // Теперь вы можете использовать mytokenFirebase по вашему усмотрению
+} else {
+  // Пользователь не найден или не имеет поля mytokenFirebase
+  const mytokenFirebase = 'myerror'
+  console.log("Пользователь не найден или не имеет поля mytokenFirebase");
+}
+
+
 
     // boolean   ищем в поле following пользователя
   const isFollowedBefore = loggedInUser.following.find(
@@ -250,14 +279,13 @@ exports.followUnfollowUser = catchAsyncErrors(async (req, res, next) => {
 
       console.log('---ЕСТЬ --ПОПЫТКА удалить');    
     
-     // соединение с бд
- await connectDb();
+ 
       //УДАЛЯЕМ
       // нашли его,  здесь мы pull  -!!!  т.е мой айди удалим у пользователю к которому я подписался
       await User.updateOne(
         { _id: followUserId },  //айди подписчика
         { $pull: { followers: { userId: loggedInUserId },
-                   podpisani: { usertoken:  followUsertokenFirebase } ,  
+                   podpisani: { usertoken:  mytokenFirebase } ,  
        },
        $inc: { podpisaniNumber: -1 }, // Уменьшаем podpisaniNumber на 1
       } //айди пользователя
@@ -289,7 +317,8 @@ const bbody = ' от вас отписался' + loggedInUser.name
  const otik = 'UNSUB'             
  const dd ={ ouserid , ousername, ouserpodpis, otik }
  console.log('-----отправляем ф-ю soob');  
-soob( followUsertokenFirebase, ttitle, bbody, dd)
+// soob( followUsertokenFirebase, ttitle, bbody, dd)
+soob( mytokenFirebase, ttitle, bbody, dd)  
 ///////////////////////////////////////////
 console.log('-----вывод стат 200'); 
  res.status(200).json({ success: true, message: "User unfollowed successfully", });
@@ -298,15 +327,14 @@ console.log('-----вывод стат 200');
      else {
       //ДОБАВЛЯЕМ
       console.log('-----ПОПЫТКА ДОБАВИТь');  
-      // соединение с бд
- await connectDb();
+ 
 
 // ненашли его ,  здесь мы push  -!!!  т.е мой айди заносим к пользователю к которому я подписался
       await User.updateOne( // кто на тебя подписался
         { _id: followUserId }, //айди к кому я хочу подписаться  
    //ЧТО ДОБАВЛЯЮ
         { $push: { followers: { userId: loggedInUserId } ,
-                   podpisani: { usertoken: followUsertokenFirebase} ,          
+                   podpisani: { usertoken: mytokenFirebase} ,          
                  },
                  $inc: { podpisaniNumber: 1 }, // Увеличиваем podpisaniNumber на 1         
        } //мой айди добавили к нему 
@@ -343,7 +371,10 @@ console.log('-----вывод стат 200');
     //  const ofirebase   = tokenfirebase                  
       const dd ={ ouserid , ousername, ouserpodpis, otik}
       console.log('-----отправляем подписку ф-ю soob'); 
-      soob(followUsertokenFirebase, ttitle, bbody, dd)
+     
+      // soob( followUsertokenFirebase, ttitle, bbody, dd)
+         soob( mytokenFirebase, ttitle, bbody, dd)  
+
       ///////////////////////////////////////////
       
       console.log('-----и выводим  статус 200'); 
