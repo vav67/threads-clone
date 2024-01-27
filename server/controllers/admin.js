@@ -13,6 +13,9 @@ const { initializeApp } = require('../firebase'); // Импортируем init
   const soobadm = async ( mytokenFirebase, ttitle, bbody, dd) => {
     try {   
   
+       // соединение с бд
+ await connectDb()
+ 
       console.log('-----выполняется ф-я soob начало');   
       //const {  ouserid , ousername, ouserpodpis, otik  } = dd
       const {   ousername   } = dd
