@@ -1,83 +1,105 @@
- const admin = require( 'firebase-admin')  // добавил
- 
-  const { initializeApp } = require('../firebase'); // Импортируем initializeApp из вашего firebase.ts
- 
+const User = require("../models/UserModel");
 const catchAsyncErrors = require("../middleware/catchAsyncErrors");
 
-//http://192.168.31.85:8000/api/admin
-let firebaseInitialized = false; // Добавьте глобальную переменную
+ //////////сообщения/////////////////////
+const admin = require( 'firebase-admin')  // добавил
+const { initializeApp } = require('../firebase'); // Импортируем initializeApp из вашего firebase.ts
+//const {  initializeFirebase } = require('../firebase');
 
+//http://192.168.31.85:8000/api/admin
+ // let firebaseInitialized = false; // Добавьте глобальную переменную
+/////////////////////////////////////
+//const soob = async ( followUsertokenFirebase, ttitle, bbody, dd) => {
+  const soobadm = async ( mytokenFirebase, ttitle, bbody, dd) => {
+    try {   
+  
+      console.log('-----выполняется ф-я soob начало');   
+      //const {  ouserid , ousername, ouserpodpis, otik  } = dd
+      const {   ousername   } = dd
+
+    
+      if ( !global.firebaseInitialized ) {   
+        initializeApp(); // Инициализируем Firebase приложение только, если не было инициализации ранее
+       //firebaseInitialized = true; // Устанавливаем флаг, что Firebase был инициализирован
+       global.firebaseInitialized = true
+        }
+  
+     //   console.log("----- dd=", dd);   
+      //отправка пуш-нотификация конкретному юзеру
+  
+      console.log('!!-----  ф-я soob отправка mytokenFirebase=', mytokenFirebase);   
+        
+     let result = await  admin.messaging().sendEachForMulticast({
+   
+      //tokens: owner.tokens, // ['token_1', 'token_2', ...]
+  //tokens:[ followUsertokenFirebase],
+  tokens:[ mytokenFirebase ],
+  notification: {
+           title:ttitle, //   'ПОДПИСКА'  : 'Заголовок уведомления сервер',   
+           body: bbody, //: 'Текст уведомления сервер',  
+              // owner: JSON.stringify(owner),
+          //  user: JSON.stringify(user),
+           // picture: JSON.stringify(picture),
+          },
+          data: {
+          //  ouserid , 
+            ousername
+         //   ouserpodpis,
+         //   otik
+           // ,   ofirebase 
+          },
+     
+         });
+     
+     console.log("result=", result);
+     
+   } catch (error) { console.error('Ошибка createUser:', error); }
+    
+  
+   }
 
 
 
 
 exports.adm = catchAsyncErrors(async (req, res, next) => {
 try {
- 
-    if (!firebaseInitialized) {
-      initializeApp(); // Инициализируем Firebase приложение только, если не было инициализации ранее
-      firebaseInitialized = true; // Устанавливаем флаг, что Firebase был инициализирован
-    }
-
-    //отправка пуш-нотификация конкретному юзеру
-   let result = await  admin.messaging().sendEachForMulticast({
- 
-        //tokens: owner.tokens, // ['token_1', 'token_2', ...]
-tokens:['eUn7d2moT2aRCMD-KwSL8n:APA91bFjv3FO-k3nHTs5KgM_J0UrISX1oOUt6DsCtBTpCBZajArVkIaJb5QjIroqK9IUCV9rNUQrt11GZlKFzwc3AMCD_l_iHjdDGpSKlgDy4yeONYhOF-YNX5NErXkExav-Ek4OH2f8'],
-notification: {
-        title: 'Заголовок уведомления сервер',   
-        body: 'Текст уведомления сервер',     
-            // owner: JSON.stringify(owner),
-        //  user: JSON.stringify(user),
-         // picture: JSON.stringify(picture),
-        },
-        data: {
-          ow: 'qqqqqqqqqqq',
-        },
-   
-       });
-   
-    //console.log( 'это проба')
-    // res.status(200).json({ message: "Это тестовый маршрут /proba" });
-  //  console.log("result=", result);
-    
-    res.status(201).json({
-      success: true,
-      result,
-    });
-
-//метод посылает пуши всим (пример -  " сегодня у нас акция")
-//------------------
-// const message = {  data: {  type: 'warning', content: 'A new weather warning has been created!',  },
-//     topic: 'weather',
-//   };
+ // console.log( ' -------- сервер это adm ' )
+  const { probafe } = req.body;
+//  console.log( ' -------- сервер это adm  probafe =', probafe  ) 
+  let userr = await User.findOne({ email:probafe });
+  const mytokenFirebase = userr.mytokenFirebase
   
-//   admin
-//     .messaging()
-//     .send(message)
-//     .then(response => { console.log('Successfully sent message:', response);  })
-//     .catch(error => { console.log('Error sending message:', error); });
-//-----
+  console.log( ' -------- это   =', mytokenFirebase)
 
-} catch (error) { res.status(500).json({  success: false, message: error.message, })
+
+////////////////////////////////////
+  const ttitle = 'ПРОБА'
+  const bbody = ' здесь нужный текст - проба'  
+//  const ouserid = loggedInUserId.toString() // айди юзера изменяет подписку
+//  const ousername =  loggedInUser.name
+//  const ouserpodpis = followUserId
+//  //const ofirebase   = tokenfirebase     
+//  const otik = 'UNSUB'             
+//  const dd ={ ouserid , ousername, ouserpodpis, otik }
+// // console.log('-----отправляем ф-ю soob');  
+// // soob( followUsertokenFirebase, ttitle, bbody, dd)
+const ousername =   'просто имя'    
+const dd ={   ousername }
+  soobadm( mytokenFirebase, ttitle, bbody, dd)  
+///////////////////////////////////////////
+
+// res.status(200).json({
+//   success: true,
+//   userr,
+// });
+ 
+//res.status(200).json({ message: `${user} - такой юзер существует}` })
+res.status(200).json({ message: ` такой юзер существует=`+ mytokenFirebase })
+} catch (error) { 
+  res.status(500).json({  success: false, message: error.message, })
     }
   });
 
 
 
-
-  //  Log out user
-// exports.logoutUser = catchAsyncErrors(async (req, res, next) => {
-//     res.cookie("token", null, {
-//       expires: new Date(Date.now()),
-//       httpOnly: true,
-//       sameSite: "none",
-//       secure: true,
-//     });
-  
-//     res.status(200).json({
-//       success: true,
-//       message: "Log out success",
-//     });
-//   });
-  
+ 

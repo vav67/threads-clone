@@ -39,7 +39,7 @@ const admin = require( 'firebase-admin')  // добавил
    //   console.log("----- dd=", dd);   
     //отправка пуш-нотификация конкретному юзеру
 
-    console.log('-----  ф-я soob отправка пуш-нотификация конкретному юзеру');   
+    console.log('!!-----  ф-я soob отправка mytokenFirebase=', mytokenFirebase);   
       
    let result = await  admin.messaging().sendEachForMulticast({
  

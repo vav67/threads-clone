@@ -235,13 +235,13 @@ export const getAllUsers = () => async (dispatch: Dispatch<any>) => {
 
     const token = await AsyncStorage.getItem('token');
 
-    console.log('-------экшен getAllUsers----------token=',token); 
+   // console.log('-------экшен getAllUsers----------token=',token); 
 
     const {data} = await axios.get(`${URI}/users`, {
       headers: {Authorization: `Bearer ${token}`},
     });
 
-    console.log('экшен getAllUsers -users state.isLoading :data.users=', data.users); 
+    //console.log('экшен getAllUsers -users state.isLoading :data.users=', data.users); 
 
     dispatch({ type: 'getUsersSuccess',   payload: data.users,   });
 
@@ -366,7 +366,7 @@ export const unfollowUserAction =
  //!!!!!!!!!!!!!!!!данные токена виртуальны(и могли измениться)
 // dispatch({ type: 'ppUser',  payload: "user ОТПИСКА !!!!!!!!!!!!="+followUsertokenFirebase ,  });
 
- //console.log(  '=ОТПИСКА запрос на add-user '  )
+ console.log(  '=ОТПИСКА запрос на add-user '  )
 
      await axios.put( `${URI}/add-user`,  {followUserId },
          { headers: { Authorization: `Bearer ${token}`, },  },

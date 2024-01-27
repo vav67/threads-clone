@@ -149,7 +149,7 @@ useEffect(() => {
 
   }
 
-   console.log( '---HomeScreen   проверка  users=', users )
+   //console.log( '---HomeScreen   проверка  users=', users )
 
   return (
     <>

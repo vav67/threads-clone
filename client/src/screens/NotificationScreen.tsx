@@ -3,11 +3,11 @@ import {
   View,
   Text,
   SafeAreaView,
-  TouchableOpacity,
+  TouchableOpacity, TextInput,  
   FlatList,
   Image,
   RefreshControl,
-  ScrollView ,
+  ScrollView , Alert,
 } from 'react-native';
  
 import   {useEffect, useState} from 'react';
@@ -44,7 +44,7 @@ const NotificationScreen = ({navigation}: Props) => {
   const {token, users, pproba} = useSelector((state: any) => state.user);
  
 
-
+  const [probafe, setProbafe] = useState('test@i.ua'); //пробую для отправки сообщений
 
  
 const [active, setActive] = useState(0);
@@ -62,7 +62,24 @@ const [active, setActive] = useState(0);
   }, []);
   
   
- 
+   
+   const probafirebase = async()=> {
+
+    console.log( `${URI}/admin=`, probafe )
+
+       await axios.put( `${URI}/admin`, { probafe },
+      {  headers: { Authorization: `Bearer ${token}`, }, },
+    )
+  .then((res: any) => {
+   console.log( 'ppNotifi =', res.data ) 
+  })
+
+
+     // Alert.alert(' and !=', probafe);   
+
+  } 
+
+
 
 
   return (
@@ -281,7 +298,30 @@ const [active, setActive] = useState(0);
   
            </View>
 
-            
+
+           <View style={tw`pl-3`}>
+           <TouchableOpacity
+        style={[{ width: 105,  height: 38, borderRadius: 8  }, 
+            {borderColor: 'rgba(0,0,0,0.29)' }          ]}      
+                   onPress={() => probafirebase()}
+             >
+                    <Text
+    style = {tw` text-black border-4 border-[#1a970f] rounded-2   
+                           text-5 font-600 text-center pt-1`} >
+             Отправь токеном firebase       
+                    </Text>
+                  </TouchableOpacity>
+
+                  <TextInput
+    placeholder="введено "
+   value={probafe}
+     placeholderTextColor={'#000'}
+     onChangeText={text => setProbafe(text)}
+  style={   tw` w-full  text-[20px]  border border-2  
+   rounded-md  px-2 py-1   my-2 mb-4   text-black` } />
+
+
+   </View>
            
            <View style={tw`pl-3`}>
           

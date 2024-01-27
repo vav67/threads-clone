@@ -26,7 +26,7 @@ app.use("/api/v1", user);
 app.use("/api/proba", probaRouter); // новый роутер
 app.use("/api/v1", post); 
 
-app.use("/api/admin", admin); 
+app.use("/api/v1", admin); 
 
 // it's for errorHandeling
 app.use(ErrorHandler);
