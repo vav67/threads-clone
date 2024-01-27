@@ -21,43 +21,30 @@ const { initializeApp } = require('../firebase'); // Импортируем init
       //const {  ouserid , ousername, ouserpodpis, otik  } = dd
       const {   ousername   } = dd
 
-    
       if ( !global.firebaseInitialized ) {   
         initializeApp(); // Инициализируем Firebase приложение только, если не было инициализации ранее
-       //firebaseInitialized = true; // Устанавливаем флаг, что Firebase был инициализирован
-       global.firebaseInitialized = true
+         global.firebaseInitialized = true
         }
-  
-     //   console.log("----- dd=", dd);   
-      //отправка пуш-нотификация конкретному юзеру
-  
-      console.log('!!-----  ф-я soob отправка mytokenFirebase=', mytokenFirebase);   
+   console.log('**********  ф-я soob отправка mytokenFirebase=', mytokenFirebase);   
         
      let result = await  admin.messaging().sendEachForMulticast({
-   
-      //tokens: owner.tokens, // ['token_1', 'token_2', ...]
-  //tokens:[ followUsertokenFirebase],
-  tokens:[ mytokenFirebase ],
+     tokens:[ mytokenFirebase ],
   notification: {
-           title:ttitle, //   'ПОДПИСКА'  : 'Заголовок уведомления сервер',   
-           body: bbody, //: 'Текст уведомления сервер',  
-              // owner: JSON.stringify(owner),
-          //  user: JSON.stringify(user),
-           // picture: JSON.stringify(picture),
+           title:ttitle,    
+           body: bbody,   
+      
           },
           data: {
-          //  ouserid , 
-            ousername
-         //   ouserpodpis,
-         //   otik
-           // ,   ofirebase 
-          },
-     
-         });
+                ousername
+              }, /////////////////
+       android: {
+               priority: 'high'
+            }
+         })
      
      console.log("result=", result);
      
-   } catch (error) { console.error('Ошибка createUser:', error); }
+   } catch (error) { console.error('Ошибка ф-я soobadm:', error); }
     
   
    }
