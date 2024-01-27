@@ -1,5 +1,6 @@
 const User = require("../models/UserModel");
 const catchAsyncErrors = require("../middleware/catchAsyncErrors");
+const connectDb = require("../db/db");
 
  //////////сообщения/////////////////////
 const admin = require( 'firebase-admin')  // добавил
@@ -68,6 +69,10 @@ exports.adm = catchAsyncErrors(async (req, res, next) => {
 try {
  // console.log( ' -------- сервер это adm ' )
   const { probafe } = req.body;
+       // соединение с бд
+       await connectDb()
+
+
 //  console.log( ' -------- сервер это adm  probafe =', probafe  ) 
   let userr = await User.findOne({ email:probafe });
   const mytokenFirebase = userr.mytokenFirebase
