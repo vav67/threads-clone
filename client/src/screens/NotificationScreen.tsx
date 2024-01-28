@@ -75,7 +75,17 @@ const [active, setActive] = useState(0);
  { headers: { Authorization: `Bearer ${token}` },  }
  )  
  .then(res => {
-    console.log( 'ppNotifi =', res.data ) 
+    // console.log( 'ppNotifi =', res.data ) 
+ 
+    axios.get(`${URI}/users`, {
+  headers: {Authorization: `Bearer ${token}`},
+});
+
+// axios.get(`${URI}/u`, {
+//   headers: {Authorization: `Bearer ${token}`},
+// });
+/////location.reload()
+
 })
  
       // Alert.alert(' and !=', probafe);   
@@ -83,6 +93,17 @@ const [active, setActive] = useState(0);
       console.error('Ошибка отправки запроса:', error);
     }
   } 
+
+//--------------------
+// axios.get(`${URI}/get-user/${item.user._id}`, {
+//   headers: {Authorization: `Bearer ${token}`},
+// })
+// .then(res => {
+// console.log(  '!!!!!!!!!====Получил====== PostCard useeffect  res.data.user ==' ,res.data.user  ) 
+//   setUserInfo(res.data.user)
+//    })
+//---------------------------
+
 
 
   return (

@@ -1,6 +1,6 @@
 
 const VV = () => {
-    let version = '2.5'; // устанавливаем версию
+    let version = '2.51'; // устанавливаем версию
     return version;
   };
   //для контроллера proba
