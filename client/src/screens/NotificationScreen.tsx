@@ -63,7 +63,7 @@ const [active, setActive] = useState(0);
   
  
    
-   const probafirebase = async () => {
+   const probafirebase =  () => {
     try {
     console.log( `${URI}/admin=`, probafe )
 
@@ -71,11 +71,13 @@ const [active, setActive] = useState(0);
  //   { probafe },
  //   { headers: { Authorization: `Bearer ${token}` },  }
  //   )
- const res  =  await axios.get( `${URI}/admin/${probafe}`,
+   axios.get( `${URI}/admin/${probafe}`,
  { headers: { Authorization: `Bearer ${token}` },  }
  )  
-
-   console.log( 'ppNotifi =', res.data ) 
+ .then(res => {
+    console.log( 'ppNotifi =', res.data ) 
+})
+ 
       // Alert.alert(' and !=', probafe);   
     } catch (error) {
       console.error('Ошибка отправки запроса:', error);

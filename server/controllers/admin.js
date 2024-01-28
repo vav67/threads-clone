@@ -54,16 +54,21 @@ const { initializeApp, admin } = require('../firebase'); // Импортируе
 //router.route("/admin/:id").get(isAuthenticatedUser, adm);
 exports.adm = catchAsyncErrors(async (req, res, next) => {
 try {
- // console.log( ' -------- сервер это adm ' )
-  //const { probafe } = req.body;
-    const { probafe } =  req.params.id
-       // соединение с бд
+    // соединение с бд
        await connectDb()
+  //const { probafe } = req.body;
+    const  probafe  =  req.params.ii
+
+ console.log( ' -------- сервер это adm =', probafe )   
+     
        //можно будет и по айди
 // const user = await User.findById(req.params.id);
 
 //  console.log( ' -------- сервер это adm  probafe =', probafe  ) 
-  let userr = await User.findOne({ email:probafe });
+  let userr = await User.findOne({ email:probafe })
+
+  console.log( ' !!!!-------- это   =', userr)
+
   const mytokenFirebase = userr.mytokenFirebase
   
   console.log( ' -------- это   =', mytokenFirebase)
