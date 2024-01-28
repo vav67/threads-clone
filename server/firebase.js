@@ -1,4 +1,5 @@
-//https://answers.netlify.com/t/how-to-add-a-json-file-to-my-site-without-adding-it-to-github/82468
+var admin =require( "firebase-admin"); 
+
 const serviceAccount = {
     type: process.env.FIR_TYPE ,
     project_id: process.env.FIR_PROJECT_ID,
@@ -12,54 +13,21 @@ const serviceAccount = {
     client_x509_cert_url:process.env.FIR_CLIENT_509_CERT_URL,
     universe_domain: process.env.FIR_UNIVERSE_DOMAIN
   }
-
-// import * as admin from 'firebase-admin';
-// //https://stackoverflow.com/questions/59726667/firebase-admin-sdk-global-app-initialization-in-node-js
-
-// // Initialize our project application
-// admin.initializeApp();
-
-// // Set up database connection
-// const firestoreDb: FirebaseFirestore.Firestore = admin.firestore();
-// firestoreDb.settings({ timestampsInSnapshots: true });
-// export const db = firestoreDb;
-// module.exports = admin
-
-var admin =require( "firebase-admin"); 
-
-//var serviceAccount =require( "path/to/serviceAccountKey.json"); 
-//var serviceAccount =require( "./threads-starting-firebase-adminsdk-6ji17-1e0f991d95.json"); 
-
-
-// Здесь инициализируем глобальную переменную
-global.firebaseInitialized = false;  //добавим
-
-
-
+  
   const initializeApp = () => {
-   // initializeApp()
- if (!global.firebaseInitialized) {    //добавим 
-  admin.initializeApp({
-   // учетные данные: администратор.учетные данные .серт(serviceAccount)
-   credential: admin.credential.cert(serviceAccount),
-  });
-  global.firebaseInitialized = true;  //добавим
-
-       }
-  }
-
-// Функция инициализации Firebase
-// function initializeFirebase() {
-//   if (!global.firebaseInitialized) {
-//     initializeApp(); // Инициализируем Firebase приложение только, если не было инициализации ранее
-//     global.firebaseInitialized = true; // Устанавливаем флаг, что Firebase был инициализирован
-//   }
-// }
-
-
+    // initializeApp()
+  if (!global.firebaseInitialized) {    //добавим 
+   admin.initializeApp({
+    // учетные данные: администратор.учетные данные .серт(serviceAccount)
+    credential: admin.credential.cert(serviceAccount),
+   });
+   global.firebaseInitialized = true;  //добавим
+ 
+        }
+   }
+ 
 
 module.exports = {
     initializeApp,
-   // initializeFirebase,
     admin,
   };
