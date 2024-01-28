@@ -15,8 +15,7 @@ const { initializeApp, admin } = require('../firebase'); // Импортируе
   const soobadm = async ( mytokenFirebase, ttitle, bbody, dd) => {
     try {   
  
-  // соединение с бд
-  await connectDb()
+ 
       console.log('-----выполняется ф-я soob начало');   
       //const {  ouserid , ousername, ouserpodpis, otik  } = dd
       const {   ousername   } = dd
@@ -41,10 +40,9 @@ const { initializeApp, admin } = require('../firebase'); // Импортируе
                priority: 'high'
             }
          })
-      // соединение с бд
-      await connectDb()
+   
       
-     console.log("result=", result);
+   //  console.log("result=", result);
      
    } catch (error) {
     console.error('Ошибка ф-я soobadm:', error);
