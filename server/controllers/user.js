@@ -14,6 +14,7 @@ const yesNotifi = "no" //пока нет нотификации
 //////////сообщения/////////////////////
 // временно const admin = require( 'firebase-admin')  // добавил
  const { initializeApp, admin } = require('../firebase'); // Импортируем initializeApp из вашего firebase.ts
+const soobadm = require("./notificationsController");
 //const {  initializeFirebase } = require('../firebase');
 
 //http://192.168.31.85:8000/api/admin
@@ -22,53 +23,53 @@ const yesNotifi = "no" //пока нет нотификации
 
  
 
-//const soob = async ( followUsertokenFirebase, ttitle, bbody, dd) => {
-  const soob = async ( mytokenFirebase, ttitle, bbody, dd) => {
-  try {   
+// //const soob = async ( followUsertokenFirebase, ttitle, bbody, dd) => {
+//   const soob = async ( mytokenFirebase, ttitle, bbody, dd) => {
+//   try {   
 
-    console.log('-----выполняется ф-я soob начало');   
-    const {  ouserid , ousername, ouserpodpis, otik  } = dd
+//     console.log('-----выполняется ф-я soob начало');   
+//     const {  ouserid , ousername, ouserpodpis, otik  } = dd
 
-   // if (!firebaseInitialized) {
-    if ( !global.firebaseInitialized ) {   
-      initializeApp(); // Инициализируем Firebase приложение только, если не было инициализации ранее
-     //firebaseInitialized = true; // Устанавливаем флаг, что Firebase был инициализирован
-     global.firebaseInitialized = true
-      }
+//    // if (!firebaseInitialized) {
+//     if ( !global.firebaseInitialized ) {   
+//       initializeApp(); // Инициализируем Firebase приложение только, если не было инициализации ранее
+//      //firebaseInitialized = true; // Устанавливаем флаг, что Firebase был инициализирован
+//      global.firebaseInitialized = true
+//       }
 
-   //   console.log("----- dd=", dd);   
-    //отправка пуш-нотификация конкретному юзеру
+//    //   console.log("----- dd=", dd);   
+//     //отправка пуш-нотификация конкретному юзеру
 
-    console.log('!!-----  ф-я soob отправка mytokenFirebase=', mytokenFirebase);   
+//     console.log('!!-----  ф-я soob отправка mytokenFirebase=', mytokenFirebase);   
       
-   let result = await  admin.messaging().sendEachForMulticast({
+//    let result = await  admin.messaging().sendEachForMulticast({
  
-    //tokens: owner.tokens, // ['token_1', 'token_2', ...]
-//tokens:[ followUsertokenFirebase],
-tokens:[ mytokenFirebase ],
-notification: {
-         title:ttitle, //   'ПОДПИСКА'  : 'Заголовок уведомления сервер',   
-         body: bbody, //: 'Текст уведомления сервер',  
-            // owner: JSON.stringify(owner),
-        //  user: JSON.stringify(user),
-         // picture: JSON.stringify(picture),
-        },
-        data: {
-          ouserid , 
-          ousername,
-          ouserpodpis,
-          otik
-         // ,   ofirebase 
-        },
+//     //tokens: owner.tokens, // ['token_1', 'token_2', ...]
+// //tokens:[ followUsertokenFirebase],
+// tokens:[ mytokenFirebase ],
+// notification: {
+//          title:ttitle, //   'ПОДПИСКА'  : 'Заголовок уведомления сервер',   
+//          body: bbody, //: 'Текст уведомления сервер',  
+//             // owner: JSON.stringify(owner),
+//         //  user: JSON.stringify(user),
+//          // picture: JSON.stringify(picture),
+//         },
+//         data: {
+//           ouserid , 
+//           ousername,
+//           ouserpodpis,
+//           otik
+//          // ,   ofirebase 
+//         },
    
-       });
+//        });
    
-   console.log("result=", result);
+//    console.log("result=", result);
    
- } catch (error) { console.error('Ошибка createUser:', error); }
+//  } catch (error) { console.error('Ошибка createUser:', error); }
   
 
- }
+//  }
 
 
 
@@ -240,6 +241,16 @@ exports.followUnfollowUser = catchAsyncErrors(async (req, res, next) => {
   let mytokenFirebase; // Переменная определена в области видимости функции
 
   try {
+
+    if ( !global.firebaseInitialized ) {   
+      initializeApp(); // Инициализируем Firebase приложение только, если не было инициализации ранее
+       global.firebaseInitialized = true
+     }
+ 
+     // соединение с бд
+    await connectDb();
+
+
     const loggedInUser = req.user; //  пользователь ( мой айди )
  
    // console.log('############## req.user=', req.user ); 
@@ -247,8 +258,7 @@ exports.followUnfollowUser = catchAsyncErrors(async (req, res, next) => {
    // const { followUserId,  followUsertokenFirebase } = req.body;//подписчик(к кому хочу подписаться)
     const { followUserId } = req.body;//подписчик(к кому хочу подписаться)
 
-    // соединение с бд
-    await connectDb();
+   
 
  //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!   
 // найдем юзера к которому будем отсылать сообщение (возьмем свежие токены Firebase)
@@ -327,10 +337,11 @@ const bbody = ' от вас отписался' + loggedInUser.name
  const dd ={ ouserid , ousername, ouserpodpis, otik }
 // console.log('-----отправляем ф-ю soob');  
 // soob( followUsertokenFirebase, ttitle, bbody, dd)
-soob( mytokenFirebase, ttitle, bbody, dd)  
+soobadm( mytokenFirebase, ttitle, bbody, dd)  
 ///////////////////////////////////////////
-console.log('-----вывод стат 200'); 
- res.status(200).json({ success: true, message: "User unfollowed successfully", });
+console.log('-----вывод стат 201'); 
+ res.status(201).json({ success: true,
+     message: "User unfollowed successfully", });
 
     }
      else {
@@ -382,12 +393,12 @@ console.log('-----вывод стат 200');
       console.log('-----отправляем подписку ф-ю soob'); 
      
       // soob( followUsertokenFirebase, ttitle, bbody, dd)
-         soob( mytokenFirebase, ttitle, bbody, dd)  
+      soobadm( mytokenFirebase, ttitle, bbody, dd)  
 
       ///////////////////////////////////////////
       
-      console.log('-----и выводим  статус 200'); 
-      res.status(200).json({
+      console.log('-----и выводим  статус 201'); 
+      res.status(201).json({
         success: true,
         message: "User followed successfully Пользователь успешно подписан",
       });
