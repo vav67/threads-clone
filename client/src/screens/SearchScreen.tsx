@@ -17,6 +17,8 @@ import  {useEffect, useState} from 'react';
   import Loader from '../common/Loader';
 
 import tw from 'twrnc';
+import axios from 'axios';
+import { URI } from '../../redux/URI';
  
  
 
@@ -37,7 +39,7 @@ const [data, setData] = useState(
     },
   ]);
 
-  const {users, user, isLoading } = useSelector((state: any) => state.user);
+  const {users, user, isLoading, token } = useSelector((state: any) => state.user);
   const dispatch = useDispatch();
 
  //ненужно 5-06-25 const [users, setUsers] = useState<any>(null);
@@ -144,6 +146,13 @@ renderItem = {({item}) =>{
                     followUserId: e._id,
                     tokenfirebase: user.mytokenFirebase,  //сам (виртуал) передаем токен для оповещения
                   })(dispatch);
+               //////////////////////////////////////////////////////////////////
+  //  let probafe = "test@i.ua"
+  //  axios.get( `${URI}/admin/${probafe}`,
+  //  { headers: { Authorization: `Bearer ${token}` },  }
+  //  ) 
+//////////////////////////////////////////////////
+
                 } else {
                   await followUserAction({   // подписка
                     userId: user._id, 
@@ -151,6 +160,13 @@ renderItem = {({item}) =>{
                     followUserId: e._id,
                     tokenfirebase: user.mytokenFirebase,  //сам (виртуал)передаем токен для оповещения
                   })(dispatch);
+
+              //////////////////////////////////////////////////////////////////
+  //  let probafe = "test@i.ua"
+  //  axios.get( `${URI}/admin/${probafe}`,
+  //  { headers: { Authorization: `Bearer ${token}` },  }
+  //  ) 
+//////////////////////////////////////////////////             
                 }
     } catch (error) {  console.log(error, 'error');  }
             };
@@ -179,7 +195,7 @@ return (
          <Text style = {tw`pl-3 mt-1 text-3 text-[#8a8585] `}>
           {item.followers?.length} followers подписчиков</Text>
        </View>
-       {/*   временно убрал   <View>
+           <View>
    <TouchableOpacity
   style={tw`rounded-2  flex flex-row justify-center items-center py-2 w-[100px]
    border border-[#0000004b]` }
@@ -192,7 +208,7 @@ return (
          </Text>
        
      </TouchableOpacity>
-       </View> */}
+       </View>  
 
   </View>
 </View>

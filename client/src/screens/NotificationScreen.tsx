@@ -77,9 +77,9 @@ const [active, setActive] = useState(0);
  .then(res => {
     // console.log( 'ppNotifi =', res.data ) 
  
-    axios.get(`${URI}/users`, {
-  headers: {Authorization: `Bearer ${token}`},
-});
+// ===    axios.get(`${URI}/users`, {
+// ====  headers: {Authorization: `Bearer ${token}`},
+// ====  });
 
 // axios.get(`${URI}/u`, {
 //   headers: {Authorization: `Bearer ${token}`},

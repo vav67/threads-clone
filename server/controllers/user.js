@@ -242,10 +242,10 @@ exports.followUnfollowUser = catchAsyncErrors(async (req, res, next) => {
 
   try {
 
-    if ( !global.firebaseInitialized ) {   
-      initializeApp(); // Инициализируем Firebase приложение только, если не было инициализации ранее
+      if ( !global.firebaseInitialized ) {   
+        initializeApp(); // Инициализируем Firebase приложение только, если не было инициализации ранее
        global.firebaseInitialized = true
-     }
+       }
  
      // соединение с бд
     await connectDb();
@@ -280,7 +280,7 @@ if (myFirebaseuser && myFirebaseuser.mytokenFirebase) {
   console.log("Пользователь не найден или не имеет поля mytokenFirebase");
 }
 
-console.log('##############  Итак   !myFirebaseuser=',  mytokenFirebase ); 
+//console.log('##############  Итак   !myFirebaseuser=',  mytokenFirebase ); 
 
     // boolean   ищем в поле following пользователя
   const isFollowedBefore = loggedInUser.following.find(
@@ -327,7 +327,7 @@ if (yesNotifi === "yes") {
   
   }// конец пока нет нотификации
 ////////////////////////////////////
-const ttitle = 'ПОДПИСКА'
+const ttitle = ' ОДПИСКА'
 const bbody = ' от вас отписался' + loggedInUser.name
  const ouserid = loggedInUserId.toString() // айди юзера изменяет подписку
  const ousername =  loggedInUser.name
@@ -336,8 +336,8 @@ const bbody = ' от вас отписался' + loggedInUser.name
  const otik = 'UNSUB'             
  const dd ={ ouserid , ousername, ouserpodpis, otik }
 // console.log('-----отправляем ф-ю soob');  
-// soob( followUsertokenFirebase, ttitle, bbody, dd)
-soobadm( mytokenFirebase, ttitle, bbody, dd)  
+// soob( mytokenFirebase, ttitle, bbody, dd)
+  soobadm( mytokenFirebase, ttitle, bbody, dd)  
 ///////////////////////////////////////////
 console.log('-----вывод стат 201'); 
  res.status(201).json({ success: true,
@@ -391,13 +391,15 @@ console.log('-----вывод стат 201');
     //  const ofirebase   = tokenfirebase                  
       const dd ={ ouserid , ousername, ouserpodpis, otik}
       console.log('-----отправляем подписку ф-ю soob'); 
-     
-      // soob( followUsertokenFirebase, ttitle, bbody, dd)
-      soobadm( mytokenFirebase, ttitle, bbody, dd)  
+      
+     soobadm( mytokenFirebase, ttitle, bbody, dd)  
 
       ///////////////////////////////////////////
       
-      console.log('-----и выводим  статус 201'); 
+      console.log('-----и выводим  статус 201');
+
+    
+
       res.status(201).json({
         success: true,
         message: "User followed successfully Пользователь успешно подписан",
