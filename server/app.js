@@ -15,6 +15,27 @@ if(process.env.NODE_ENV!=="PRODUCTION"){
         path:".env"
     })}
 
+  
+ /**
+  *  
+    npm install cors
+    Импортируйте cors в вашем файле app.js:
+    const cors = require('cors');
+// После установки других middleware, но перед определением маршрутов
+app.use(cors());
+
+Это позволит вашему Express.js-приложению обрабатывать CORS и принимать
+ запросы от различных источников. Если у вас есть специфичные требования
+  к настройке CORS, вы можете передать соответствующие параметры в cors().
+
+Обратите внимание, что порядок использования middleware важен.
+ app.use(cors()) должен быть установлен после других middleware, 
+ которые обрабатывают запросы (например, express.json() и cookieParser()),
+  но до определения маршрутов.
+
+*/
+
+
 // Route imports
 const user = require("./routes/user");
 const probaRouter = require("./routes/proba"); // новый роутер

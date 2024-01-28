@@ -1,4 +1,5 @@
 const User = require("../models/UserModel");
+const ErrorHandler = require("../utils/ErrorHandler.js");
 const catchAsyncErrors = require("../middleware/catchAsyncErrors");
 const connectDb = require("../db/db");
 
@@ -13,18 +14,16 @@ const { initializeApp, admin } = require('../firebase'); // Импортируе
 //const soob = async ( followUsertokenFirebase, ttitle, bbody, dd) => {
   const soobadm = async ( mytokenFirebase, ttitle, bbody, dd) => {
     try {   
-  
-       // соединение с бд
- await connectDb()
+ 
  
       console.log('-----выполняется ф-я soob начало');   
       //const {  ouserid , ousername, ouserpodpis, otik  } = dd
       const {   ousername   } = dd
 
-      if ( !global.firebaseInitialized ) {   
-        initializeApp(); // Инициализируем Firebase приложение только, если не было инициализации ранее
-         global.firebaseInitialized = true
-        }
+        if ( !global.firebaseInitialized ) {   
+          initializeApp(); // Инициализируем Firebase приложение только, если не было инициализации ранее
+           global.firebaseInitialized = true
+         }
    console.log('**********  ф-я soob отправка mytokenFirebase=', mytokenFirebase);   
         
      let result = await  admin.messaging().sendEachForMulticast({
@@ -44,21 +43,24 @@ const { initializeApp, admin } = require('../firebase'); // Импортируе
      
      console.log("result=", result);
      
-   } catch (error) { console.error('Ошибка ф-я soobadm:', error); }
-    
-  
+   } catch (error) {
+    console.error('Ошибка ф-я soobadm:', error);
+    throw error; // Пробросить ошибку вверх для обработки в контроллере
+         }
    }
 
 
 
-
+//router.route("/admin/:id").get(isAuthenticatedUser, adm);
 exports.adm = catchAsyncErrors(async (req, res, next) => {
 try {
  // console.log( ' -------- сервер это adm ' )
-  const { probafe } = req.body;
+  //const { probafe } = req.body;
+    const { probafe } =  req.params.id
        // соединение с бд
        await connectDb()
-
+       //можно будет и по айди
+// const user = await User.findById(req.params.id);
 
 //  console.log( ' -------- сервер это adm  probafe =', probafe  ) 
   let userr = await User.findOne({ email:probafe });
@@ -80,6 +82,11 @@ try {
 // // soob( followUsertokenFirebase, ttitle, bbody, dd)
 const ousername =   'просто имя'    
 const dd ={   ousername }
+
+  // Используйте функцию initializeApp здесь
+ ///// initializeApp();
+
+
   soobadm( mytokenFirebase, ttitle, bbody, dd)  
 ///////////////////////////////////////////
 
@@ -89,10 +96,14 @@ const dd ={   ousername }
 // });
  
 //res.status(200).json({ message: `${user} - такой юзер существует}` })
-res.status(200).json({ message: ` такой юзер существует=`+ mytokenFirebase })
+//res.status(200).json({ message: ` такой юзер существует=`+ mytokenFirebase })
+res.status(201).json({ success: true, userr });
+
 } catch (error) { 
-  res.status(500).json({  success: false, message: error.message, })
-    }
+ // res.status(500).json({  success: false, message: error.message, })
+  return next(new ErrorHandler(error.message, 401)); 
+
+}
   });
 
 

@@ -8,8 +8,9 @@ const router = express.Router();
 
 //пути
 
-router.route("/admin").put(isAuthenticatedUser, adm);
-
+//router.route("/admin").put(isAuthenticatedUser, adm);
+router.route("/admin/:id").get(isAuthenticatedUser, adm);
+//router.route("/get-user/:id").get(isAuthenticatedUser, getUser);
 
 
 module.exports = router;

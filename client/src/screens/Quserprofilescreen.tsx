@@ -13,7 +13,8 @@ import {useDispatch, useSelector} from 'react-redux';
  
 import tw from 'twrnc';
 import { followUserAction, unfollowUserAction } from '../../redux/actions/userAction';
-import PostCard from '../components/PostCard';
+//import PostCard from '../components/PostCard';
+import QPostCard from '../components/QPostCard';
  
  
 
@@ -90,16 +91,17 @@ setPostsData(myUserPosts)
        {data && (
         <SafeAreaView>
           {imagePreview ? (
-            <TouchableOpacity
+            
+              <TouchableOpacity
             style = {tw`ph-screen bg-white w-full items-center justify-center`}
               onPress={() => setImagePreview(!imagePreview)}>
-              <Image
+            <Image
                 source={{uri: data.avatar.url}}
                 width={250}
                 height={250}
                 borderRadius={500}
               />
-            </TouchableOpacity>
+            </TouchableOpacity>  
           ) : 
           (
          <View   style = {tw`p-2`}>
@@ -112,7 +114,7 @@ setPostsData(myUserPosts)
                 <View style = {tw`w-full flex-row justify-between`}>
                   <View style = {tw`w-[80%]`}>
         <Text style = {tw`pt-3 text-7 text-black`}> {data.name}   </Text>
-              
+         {/*      
              {data.userName && (
                       <Text style = {tw`py-2 text-7 text-[#0000009d]`}>
                         {data.userName}   
@@ -135,9 +137,9 @@ setPostsData(myUserPosts)
                       <Text style = {tw`py-2 text-5 text-[#0cfd20c5]`}>
                         {data.followers.length} --foll=====owers подписчиков
                       </Text>
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                   </View>
-                  <TouchableOpacity
+                  {/* <TouchableOpacity
                     onPress={() => setImagePreview(!imagePreview)}>
                  <View style = {tw`relative`   } >
     
@@ -147,99 +149,36 @@ setPostsData(myUserPosts)
                         height={60}
                         borderRadius={100}
                       />
-                      {/* {data.role === 'Admin' && (
-                        <Image
-                          source={{
-                            uri: 'https://cdn-icons-png.flaticon.com/128/1828/1828640.png',
-                          }}
-                          width={18}
-                          height={18}
-                          style = {tw`l-2 absolute bottom-0 left-0`}
-                        />
-                      )} */}
+         
                     </View>
-                  </TouchableOpacity>
-                </View>
-
-        <TouchableOpacity
-  style = {tw`mt-2 rounded-[8px] w-full flex-row justify-center items-center h-8 bg-black`}
-                  //onPress={FollowUnfollowHandler}
-                  >
-                  <Text style = {tw`text-white text-5`}>
-                    {data.followers.find((i: any) => i.userId === user._id)
-                      ? 'Following'
-                      : 'Follow'}
-                  </Text>
-                </TouchableOpacity>
-
-    <View style = {tw`w-full border-b border-b-[#00000032] pt-5 pb-2 relative`}>
-              <View style = {tw`w-[80%] m-auto flex-row justify-between`}>
-                    <TouchableOpacity onPress={() => setActive(0)}>
-                      <Text
-    style={[{color: 'black', fontSize: 18,paddingLeft: 3 },
-        {opacity: active === 0 ? 1 : 0.4}, {fontWeight: active === 0 ? 'bold' : 'normal' }]}
-                      >        {' '}    Threads
-                      </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => setActive(1)}>
-                      <Text
-    style={[{color: 'black',  fontSize: 18,  //fontWeight: 'bold',  height: 20
-         paddingLeft: 3 },{opacity: active === 1 ? 1 : 0.4}, {fontWeight: active === 1 ? 'bold' : 'normal' } ]}        
-                      >     {' '}   Replies
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
-              
-            
-                  {active === 0 ? (
-  <View style = {tw`w-[50%] absolute h-[1px] bg-black left-[-10px] bottom-0`} />
-                  ) : (
-  <View style = {tw`w-[50%] absolute h-[1px] bg-black right-[-10px] bottom-0`} />
-                  )}
+                  </TouchableOpacity> */}
                 </View>
 
 
-     {active === 0 && (
-         // переключение между табами
-      <>   
-                {postData &&
+                <View> 
+                <>
+  {postData &&
                       postData.map((item: any) => (
-                        <PostCard
+                        <QPostCard
                           navigation={navigation}
                           key={item._id}
                           item={item}
                         />
                       ))}
+
       {postData.length === 0 && (
     <Text style = {tw`text-black py-10 text-center text-5`}>
                         No Post yet!
                       </Text>
-                    )} 
-                  </>
-                )}
+                    )}   
 
-  {active === 1 && (
-               <>
-       {repliesData &&
-             repliesData.map((item: any) => (
-             <PostCard
-                navigation={navigation}
-                key={item._id}
-                item={item}
-                replies={true}
-          />
-                      ))}
-     {active !== 1 && postData.length === 0 && (
-       <Text style = {tw`text-black py-10 text-center text-[18px]`}>
-            No Post yet!
-                      </Text>
-                    )}  
+
                   </>
-                )}
+
+
+                </View>
 
  
- 
-   
 
               </ScrollView>
              </View>

@@ -63,23 +63,24 @@ const [active, setActive] = useState(0);
   
  
    
-   const probafirebase = async()=> {
-
+   const probafirebase = async () => {
+    try {
     console.log( `${URI}/admin=`, probafe )
 
-       await axios.put( `${URI}/admin`, { probafe },
-      {  headers: { Authorization: `Bearer ${token}`, }, },
-    )
-  .then((res: any) => {
+ //  const res  =  await axios.put( `${URI}/admin`,
+ //   { probafe },
+ //   { headers: { Authorization: `Bearer ${token}` },  }
+ //   )
+ const res  =  await axios.get( `${URI}/admin/${probafe}`,
+ { headers: { Authorization: `Bearer ${token}` },  }
+ )  
+
    console.log( 'ppNotifi =', res.data ) 
-  })
-
-
-     // Alert.alert(' and !=', probafe);   
-
+      // Alert.alert(' and !=', probafe);   
+    } catch (error) {
+      console.error('Ошибка отправки запроса:', error);
+    }
   } 
-
-
 
 
   return (
