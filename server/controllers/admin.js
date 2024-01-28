@@ -3,8 +3,8 @@ const catchAsyncErrors = require("../middleware/catchAsyncErrors");
 const connectDb = require("../db/db");
 
  //////////сообщения/////////////////////
-const admin = require( 'firebase-admin')  // добавил
-const { initializeApp } = require('../firebase'); // Импортируем initializeApp из вашего firebase.ts
+//пока const admin = require( 'firebase-admin')  // добавил
+const { initializeApp, admin } = require('../firebase'); // Импортируем initializeApp из вашего firebase.ts
 //const {  initializeFirebase } = require('../firebase');
 
 //http://192.168.31.85:8000/api/admin

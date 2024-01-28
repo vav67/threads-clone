@@ -61,7 +61,7 @@ const [active, setActive] = useState(0);
     getNotifications()(dispatch);
   }, []);
   
-  
+ 
    
    const probafirebase = async()=> {
 
@@ -320,6 +320,21 @@ const [active, setActive] = useState(0);
   style={   tw` w-full  text-[20px]  border border-2  
    rounded-md  px-2 py-1   my-2 mb-4   text-black` } />
 
+ {/* if (users ) { //допишем если есть */}
+<TouchableOpacity
+     onPress={() =>
+       navigation.navigate('QUserProfile', {
+         item: users[2], // item,
+       })  }
+    >
+      <View   style = {tw`flex-row my-3`}>
+
+      <Text style = {tw`pl-3 text-4 text-black `}>{users[2]?.name}</Text>   
+         <Text style = {tw`pl-3 text-4 text-black `}>ssss</Text>  
+      </View>
+ 
+</TouchableOpacity>
+{/* }  */}
 
    </View>
            

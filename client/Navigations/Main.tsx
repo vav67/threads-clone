@@ -9,6 +9,7 @@ import CreateRepliesScreen from '../src/screens/CreateRepliesScreen'
   import PostLikeCard from '../src/components/PostLikeCard';
  import FollowerCard from '../src/components/FollowerCard';
  import EditProfile from "../src/components/EditProfile";
+import Quserprofilescreen from '../src/screens/Quserprofilescreen'; //сам 
 
 
 type Props = {};
@@ -30,6 +31,8 @@ const Main = (props: Props) => {
    <Stack.Screen name="PostLikeCard" component={PostLikeCard} />
    <Stack.Screen name="FollowerCard" component={FollowerCard} />
     <Stack.Screen name="EditProfile" component={EditProfile} />   
+    <Stack.Screen name="QUserProfile" component={Quserprofilescreen} />   
+    
 
     </Stack.Navigator>
   );

@@ -12,8 +12,8 @@ const connectDb = require("../db/db");
 const yesNotifi = "no" //пока нет нотификации
 
 //////////сообщения/////////////////////
-const admin = require( 'firebase-admin')  // добавил
- const { initializeApp } = require('../firebase'); // Импортируем initializeApp из вашего firebase.ts
+// временно const admin = require( 'firebase-admin')  // добавил
+ const { initializeApp, admin } = require('../firebase'); // Импортируем initializeApp из вашего firebase.ts
 //const {  initializeFirebase } = require('../firebase');
 
 //http://192.168.31.85:8000/api/admin

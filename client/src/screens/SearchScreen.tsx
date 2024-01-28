@@ -179,7 +179,7 @@ return (
          <Text style = {tw`pl-3 mt-1 text-3 text-[#8a8585] `}>
           {item.followers?.length} followers подписчиков</Text>
        </View>
-       <View>
+       {/*   временно убрал   <View>
    <TouchableOpacity
   style={tw`rounded-2  flex flex-row justify-center items-center py-2 w-[100px]
    border border-[#0000004b]` }
@@ -192,7 +192,7 @@ return (
          </Text>
        
      </TouchableOpacity>
-       </View>
+       </View> */}
 
   </View>
 </View>

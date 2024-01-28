@@ -101,6 +101,7 @@ SoobSubscribe({ datapodpiska, user, users  })(dispatch);
  
 //спрашиваем разрешения оповещения
   useEffect(() => { 
+    console.log("=СЕРВИС ====создаем канал для отображения сообщения")
 //создаем канал для отображения сообщения
   PushNotification.createChannel(
     {
@@ -124,6 +125,7 @@ SoobSubscribe({ datapodpiska, user, users  })(dispatch);
  
 //получаем сообщение
   const getPushData =async (remoteMessage:any) => {
+    console.log("=СЕРВИС ====getPushData=")
 
    const { notification, data } = remoteMessage;
    
@@ -167,6 +169,8 @@ SoobSubscribe({ datapodpiska, user, users  })(dispatch);
 
 
   useEffect(() => { 
+
+    console.log("=СЕРВИС ====messaging().onMessage=")
    // перенсли   getToken() //получаем токен
    // сервис, который будет отвечать за прием сообщений   
      const unsubMessaging = messaging().onMessage(getPushData)
