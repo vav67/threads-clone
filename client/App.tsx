@@ -81,6 +81,18 @@ SoobSubscribe({ datapodpiska, user, users  })(dispatch);
   }
 
 
+  
+  
+   useEffect(() => {
+  
+   loadUser()(dispatch)       
+ 
+ 
+    }, [ ]);
+
+
+
+
 
   useEffect(() => { //сообщение лайк
     console.log( '*@@@@@@@@ ---Изменилась data=',ddata )

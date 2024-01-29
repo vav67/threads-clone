@@ -25,7 +25,8 @@ const soobadm = async (mytokenFirebase, ttitle, bbody, dd) => {
         body: bbody,
       },
       data: {
-        ousername: dd.ousername,
+         ...dd,
+        // ousername: dd.ousername,
       },
       android: {
         priority: 'high',

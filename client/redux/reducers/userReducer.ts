@@ -363,7 +363,7 @@ state.pproba = [...state.pproba, `${action.payload}--${dateTimeString}`];
 
 .addCase(subscribeUser, (state, action:any) => {
      //добавим айпи подписанта
-     console.log( action.payload ,'====d0=============SUB=',state.user  )    
+   //  console.log( action.payload ,'====d0=============SUB=',state.user  )    
   // state.userr.followers = [...state.userr.followers, {
   //     userId: action.payload }];
   // вы создаете новый объект updatedUserr с обновленным массивом followers
@@ -376,7 +376,7 @@ state.pproba = [...state.pproba, `${action.payload}--${dateTimeString}`];
     state.user = updatedUserr;
 
 
-   console.log(action.payload , '===posle==============SUB=',state.user)     
+ //  console.log(action.payload , '===posle==============SUB=',state.user)     
  })
 
 
@@ -385,13 +385,13 @@ state.pproba = [...state.pproba, `${action.payload}--${dateTimeString}`];
 
 .addCase(unsubscribeUser, (state, action:any) => {
   //добавим айпи подписанта
-   console.log(action.payload ,'====d0=============UNSUB=',state.user  )
+//   console.log(action.payload ,'====d0=============UNSUB=',state.user  )
  
   state.user.following =  state.user.following.filter(
       (fol) => fol.userId !==action.payload ) 
 
 
-      console.log( action.payload ,'====posle=============UNSUB=',state.user  )       
+    //  console.log( action.payload ,'====posle=============UNSUB=',state.user  )       
 })
 
 

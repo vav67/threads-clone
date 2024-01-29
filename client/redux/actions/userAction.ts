@@ -427,18 +427,10 @@ export const unfollowUserAction =
     try {
     console.log (   '   ===============ЭКШЕНЫ SoobSubscribe  datapodpiska->', datapodpiska  ) 
     dispatch({ type: 'ppUser',  payload: "сработал экшен SoobSubscribe"  ,  });
-    const { ouserid , ousername, ouserpodpis, otik } = datapodpiska
-  //   users.map((userObj: any) => userObj._id === ouserid
-  //    ? 
-  //     console.log( '**--userObj._id === ouserid=',userObj._id )
-  //         : console.log( '**---userObj._id !== ouserid=',userObj._id ),
-  //  );
-
-    //datapodpiska-> {"ouserid": "651580dbd3045568faf2986b", "ousername": "test", 
-    //"ouserpodpis": "659552221ad9138615598711"}
-//, otik
-// ouserid - айди кто подписывается
-// ouserpodpis -айди на кого подписывается
+    const { ouserid ,   ouserpodpis, otik } = datapodpiska
+   
+// ouserid - айди  к кому пришло 
+// ouserpodpis -айди  кто нажал о подписке
  
 dispatch({ type: 'ppUser',  payload: "Пришли в экшены СООБЩЕНИЯ об SoobSubscribe" ,  });
   // это подписка, пришло от того юзера кто подписался ()

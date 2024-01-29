@@ -71,7 +71,7 @@ const [data, setData] = useState(
 
 useEffect(() => {
          if (users) {
-   console.log( '**************useEffect users=',users)       
+   console.log( '**************useEffect users перезаписываю' )       
           setData(users)
            }
 }, [users  ]);
@@ -147,10 +147,14 @@ renderItem = {({item}) =>{
                     tokenfirebase: user.mytokenFirebase,  //сам (виртуал) передаем токен для оповещения
                   })(dispatch);
                //////////////////////////////////////////////////////////////////
-  //  let probafe = "test@i.ua"
-  //  axios.get( `${URI}/admin/${probafe}`,
-  //  { headers: { Authorization: `Bearer ${token}` },  }
-  //  ) 
+      let probafe = "test@i.ua"
+      let subs ="отписался"
+      let userid = user._id
+      let username = user.name
+ 
+    await axios.put( `${URI}/subsc`,  {probafe, subs, userid, username  },
+    {  headers: { Authorization: `Bearer ${token}`, },   },
+  );
 //////////////////////////////////////////////////
 
                 } else {
@@ -162,10 +166,14 @@ renderItem = {({item}) =>{
                   })(dispatch);
 
               //////////////////////////////////////////////////////////////////
-  //  let probafe = "test@i.ua"
-  //  axios.get( `${URI}/admin/${probafe}`,
-  //  { headers: { Authorization: `Bearer ${token}` },  }
-  //  ) 
+     let probafe = "test@i.ua"
+     let subs ="SUBSCRIBE"
+     let userid = user._id
+     let username = user.name
+ 
+     await axios.put( `${URI}/subsc`,  {probafe, subs, userid, username },
+        {  headers: { Authorization: `Bearer ${token}`, },   },
+      );
 //////////////////////////////////////////////////             
                 }
     } catch (error) {  console.log(error, 'error');  }

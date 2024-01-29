@@ -241,123 +241,71 @@ exports.followUnfollowUser = catchAsyncErrors(async (req, res, next) => {
   let mytokenFirebase; // Переменная определена в области видимости функции
 
   try {
-
-      if ( !global.firebaseInitialized ) {   
-        initializeApp(); // Инициализируем Firebase приложение только, если не было инициализации ранее
-       global.firebaseInitialized = true
-       }
- 
-     // соединение с бд
-    await connectDb();
-
-
-    const loggedInUser = req.user; //  пользователь ( мой айди )
- 
-   // console.log('############## req.user=', req.user ); 
-
-   // const { followUserId,  followUsertokenFirebase } = req.body;//подписчик(к кому хочу подписаться)
-    const { followUserId } = req.body;//подписчик(к кому хочу подписаться)
-
-   
+     await connectDb();
+                const loggedInUser = req.user; //  пользователь ( мой айди )
+       const { followUserId } = req.body;//подписчик(к кому хочу подписаться)
 
  //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!   
 // найдем юзера к которому будем отсылать сообщение (возьмем свежие токены Firebase)
 //здесь забираем только одно поле , для быстрой связи
-//console.log('##############  ищем юзера по айди followUserId=', followUserId ); 
-let myFirebaseuser = await User.findOne({ _id: followUserId }).select('mytokenFirebase')
-//console.log('##############  находим его mytokenFirebase  myFirebaseuser=', myFirebaseuser); 
-//????????????????????????????????
+ let myFirebaseuser = await User.findOne({ _id: followUserId }).select('mytokenFirebase')
+ 
 // а если нет такого пользователя или нет такого поля mytokenFirebase
 if (myFirebaseuser && myFirebaseuser.mytokenFirebase) {
   // Пользователь найден и имеет поле mytokenFirebase
-  // const {mytokenFirebase} = myFirebaseuser ;
-  // Теперь вы можете использовать mytokenFirebase по вашему усмотрению
-  mytokenFirebase = myFirebaseuser.mytokenFirebase
-
+      mytokenFirebase = myFirebaseuser.mytokenFirebase
 } else {
-  // Пользователь не найден или не имеет поля mytokenFirebase
-  mytokenFirebase  = 'myerror'
+    mytokenFirebase  = 'myerror'
   console.log("Пользователь не найден или не имеет поля mytokenFirebase");
 }
-
-//console.log('##############  Итак   !myFirebaseuser=',  mytokenFirebase ); 
-
-    // boolean   ищем в поле following пользователя
+    
   const isFollowedBefore = loggedInUser.following.find(
        (item) => item.userId === followUserId
      );
-
-  // console.log( '!!!!----followUnfollowUser подписка (это я) польз-ь=', loggedInUser.name +
-  //         '  айди подписчик (это к кому) tokenfirebase=' +  followUsertokenFirebase )
-
-//берем айди пользователя
+ //берем айди пользователя
     const loggedInUserId = loggedInUser._id;
 
-    // да он есть
+    // да он есть тогда УДАЛЯЕМ   здесь мы pull
     if (isFollowedBefore) {
-
-    //  console.log('---ЕСТЬ --ПОПЫТКА удалить');    
-    
- 
-      //УДАЛЯЕМ
-      // нашли его,  здесь мы pull  -!!!  т.е мой айди удалим у пользователю к которому я подписался
+      //   мой айди удалим у пользователю к которому я подписался
       await User.updateOne(
         { _id: followUserId },  //айди подписчика
         { $pull: { followers: { userId: loggedInUserId },
-                   podpisani: { usertoken:  mytokenFirebase } ,  
+                   podpisani: { usertoken: loggedInUser.mytokenFirebase} ,  //мой токен
        },
        $inc: { podpisaniNumber: -1 }, // Уменьшаем podpisaniNumber на 1
-      } //айди пользователя
+          }  
       );
  //удалим из моей папки following айди к которому я подписался
       await User.updateOne(
         { _id: loggedInUserId },//айди пользователя
         { $pull: { following: { userId: followUserId } } }//подписчик
       );
-    //  console.log('-----прошло User.updateOne');  
+  
     //const yesNotifi = "no" //пока нет нотификации
 if (yesNotifi === "yes") {
-    
       //Уведомление об удалении
       await Notification.deleteOne({
         "creator._id": loggedInUserId, //мой айди
         userId: followUserId, //айди к которому я был подписан
         type: "Follow",
       });
-  
-  }// конец пока нет нотификации
-////////////////////////////////////
-const ttitle = ' ОДПИСКА'
-const bbody = ' от вас отписался' + loggedInUser.name
- const ouserid = loggedInUserId.toString() // айди юзера изменяет подписку
- const ousername =  loggedInUser.name
- const ouserpodpis = followUserId
- //const ofirebase   = tokenfirebase     
- const otik = 'UNSUB'             
- const dd ={ ouserid , ousername, ouserpodpis, otik }
-// console.log('-----отправляем ф-ю soob');  
-// soob( mytokenFirebase, ttitle, bbody, dd)
-  soobadm( mytokenFirebase, ttitle, bbody, dd)  
-///////////////////////////////////////////
-console.log('-----вывод стат 201'); 
- res.status(201).json({ success: true,
+  } 
+ 
+  res.status(201).json({ success: true,
      message: "User unfollowed successfully", });
 
     }
-     else {
-      //ДОБАВЛЯЕМ
-      console.log('-----ПОПЫТКА ДОБАВИТь');  
- 
-
-// ненашли его ,  здесь мы push  -!!!  т.е мой айди заносим к пользователю к которому я подписался
+     else { // или тогда    ДОБАВЛЯЕМ  - push
+ // ненашли его ,  здесь мы push  -!!!  т.е мой айди заносим к пользователю к которому я подписался
       await User.updateOne( // кто на тебя подписался
         { _id: followUserId }, //айди к кому я хочу подписаться  
    //ЧТО ДОБАВЛЯЮ
-        { $push: { followers: { userId: loggedInUserId } ,
-                   podpisani: { usertoken: mytokenFirebase} ,          
+        { $push: { followers: { userId: loggedInUserId } , //айди мой
+                   podpisani: { usertoken: loggedInUser.mytokenFirebase} , //  мой токен фериб         
                  },
                  $inc: { podpisaniNumber: 1 }, // Увеличиваем podpisaniNumber на 1         
-       } //мой айди добавили к нему 
+       }  
                         );
                         console.log('-----прошло podpi User.updateOne');  
  
@@ -366,13 +314,10 @@ console.log('-----вывод стат 201');
         { $push: { following: { userId: followUserId } } } //и вносим ко мне к кому я подписываюсь
         
         );
-
-        console.log('-----прошло following User.updateOne');  
-
+ 
    //const yesNotifi = "no" //пока нет нотификации
    if (yesNotifi === "yes") {
- 
-     // Уведомление что я подписался
+              // Уведомление что я подписался
       await Notification.create({
         creator: req.user,
         type: "Follow",
@@ -381,33 +326,14 @@ console.log('-----вывод стат 201');
       });
    
   }// конец пока нет нотификации
-      ////////////////////////////////////
-      const ttitle = 'ПОДПИСКА'
-      const bbody = ' к вам подписался' + loggedInUser.name
-      const ouserid = loggedInUserId.toString() // айди юзера изменяет подписку
-      const ousername =  loggedInUser.name
-      const ouserpodpis = followUserId
-      const otik = 'SUBSCRIBE'
-    //  const ofirebase   = tokenfirebase                  
-      const dd ={ ouserid , ousername, ouserpodpis, otik}
-      console.log('-----отправляем подписку ф-ю soob'); 
-      
-     soobadm( mytokenFirebase, ttitle, bbody, dd)  
-
-      ///////////////////////////////////////////
-      
-      console.log('-----и выводим  статус 201');
-
-    
-
-      res.status(201).json({
+ 
+  res.status(201).json({
         success: true,
         message: "User followed successfully Пользователь успешно подписан",
       });
+  } //конец добавления подписки
 
-
-      }
-  } catch (error) {
+    } catch (error) {
     console.error('сервер Ошибка ПОДПИСКИ followUnfollowUser:', error); // Выводим ошибку в консоль
     return next(new ErrorHandler(error.message, 401));
   }

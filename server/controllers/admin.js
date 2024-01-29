@@ -57,6 +57,70 @@ res.status(201).json({ success: true, userr });
 }
   });
 
+ 
+
+  exports.admsubsc = catchAsyncErrors(async (req, res, next) => {  
+    /**
+     *  вы должны определить переменную mytokenFirebase перед началом блока try.
+     *  Таким образом, она будет видна во всей области функции. 
+     */
+    let mytokenFirebase; // Переменная определена в области видимости функции
+    let bb;
+    try {
+  
+        if ( !global.firebaseInitialized ) {   
+          initializeApp(); // Инициализируем Firebase приложение только, если не было инициализации ранее
+         global.firebaseInitialized = true
+         }
+   
+       // соединение с бд
+      await connectDb();
+  
+    const { probafe, subs, userid, username } = req.body;//подписчик(к кому хочу подписаться)
+    
+    let userr = await User.findOne({ email:probafe })
+
+  //  console.log( ' !!!!-------- это   =', userr)
+  
+    const mytokenFirebase = userr.mytokenFirebase
+
+
+
+ 
+  ////////////////////////////////////
+  const ttitle =  'ПОДПИСКА'  //'SUBSCRIBE=' + subs
+if (subs === "SUBSCRIBE" ) 
+{ bb = 'к вам подписался  ' } 
+else { bb = ' от вас отписался  '  }
+
+  const bbody =  bb  +  username
+ //const ousername =   'просто имя'    
+
+ const otik = subs   
+ //кто подписался
+ const ouserpodpis = userr._id.toString() //const ouserid = loggedInUserId.toString() 
+  
+ const ouserid =  userid  //к кому прищло
+
+//  console.log('---server ---- otik=', otik ,  
+//  '  ouserpodpis=', ouserpodpis,  '  userid=', userid,);  
+
+  const dd = {  ouserpodpis, ouserid,   otik }
+ 
+//  console.log('---server ------- dd=',  dd);  
+//   await  soobadm( mytokenFirebase, ttitle, bbody, dd)  
+  
+
+
+res.status(201).json({ success: true, userr });
+
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 401));
+    }
+  });
+   
+     
+
 
 
  /*
