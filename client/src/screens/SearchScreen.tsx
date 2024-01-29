@@ -147,7 +147,7 @@ renderItem = {({item}) =>{
                     tokenfirebase: user.mytokenFirebase,  //сам (виртуал) передаем токен для оповещения
                   })(dispatch);
                //////////////////////////////////////////////////////////////////
-      let probafe = "test@i.ua"
+      let probafe = e._id //"test@i.ua"
       let subs ="отписался"
       let userid = user._id
       let username = user.name
@@ -166,7 +166,7 @@ renderItem = {({item}) =>{
                   })(dispatch);
 
               //////////////////////////////////////////////////////////////////
-     let probafe = "test@i.ua"
+     let probafe = e._id //"test@i.ua"
      let subs ="SUBSCRIBE"
      let userid = user._id
      let username = user.name
