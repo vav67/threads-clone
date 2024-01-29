@@ -78,9 +78,9 @@ res.status(201).json({ success: true, userr });
   
     const { probafe, subs, userid, username } = req.body;//подписчик(к кому хочу подписаться)
     
-    let userr = await User.findOne({ _id:probafe })
+    let userr = await User.findOne({  email:probafe })
 
-  //  console.log( ' !!!!-------- это   =', userr)
+   console.log( ' !!!!-------- это   =', userr)
   
     const mytokenFirebase = userr.mytokenFirebase
 
@@ -102,15 +102,15 @@ else { bb = ' от вас отписался  '  }
   
  const ouserid =  userid  //к кому прищло
 
- //  console.log('---server ---- otik=', otik ,  
- //  '  ouserpodpis=', ouserpodpis,  '  userid=', userid,);  
+   console.log('---server ---- otik=', otik ,  
+    '  ouserpodpis=', ouserpodpis,  '  userid=', userid);  
 
   const dd = {  ouserpodpis, ouserid,   otik }
  
- // console.log('---server ------- dd=',  dd);  
- //  await  soobadm( mytokenFirebase, ttitle, bbody, dd)  
+  console.log('---server ------- dd=',  dd);  
+   await  soobadm( mytokenFirebase, ttitle, bbody, dd)  
   
-
+   
 
 res.status(201).json({ success: true, userr });
 

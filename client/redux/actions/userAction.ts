@@ -278,7 +278,7 @@ export const followUserAction =
       const token = await AsyncStorage.getItem('token');
 
   const uu =  users.filter( (us: any) => us._id === followUserId  )
-//  console.log( uu[0].name, '=Подписка отфильтровали uu= ', uu[0].mytokenFirebase );
+   console.log( uu[0].name, '=Подписка отфильтровали uu= ', uu[0].mytokenFirebase );
 
   const followUsertokenFirebase = uu[0].mytokenFirebase
 
