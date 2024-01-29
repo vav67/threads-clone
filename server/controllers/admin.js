@@ -102,13 +102,13 @@ else { bb = ' от вас отписался  '  }
   
  const ouserid =  userid  //к кому прищло
 
-//  console.log('---server ---- otik=', otik ,  
-//  '  ouserpodpis=', ouserpodpis,  '  userid=', userid,);  
+   console.log('---server ---- otik=', otik ,  
+   '  ouserpodpis=', ouserpodpis,  '  userid=', userid,);  
 
   const dd = {  ouserpodpis, ouserid,   otik }
  
-//  console.log('---server ------- dd=',  dd);  
-//   await  soobadm( mytokenFirebase, ttitle, bbody, dd)  
+  console.log('---server ------- dd=',  dd);  
+   await  soobadm( mytokenFirebase, ttitle, bbody, dd)  
   
 
 
