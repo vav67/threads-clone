@@ -78,7 +78,9 @@ res.status(201).json({ success: true, userr });
   
     const { probafe, subs, userid, username } = req.body;//подписчик(к кому хочу подписаться)
     
-    let userr = await User.findOne({  email:probafe })
+    //let userr = await User.findOne({  email:probafe })
+    let userr = await User.findOne({ _id:probafe })
+
 
    console.log( ' !!!!-------- это   =', userr)
   

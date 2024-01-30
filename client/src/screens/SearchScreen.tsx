@@ -147,7 +147,7 @@ renderItem = {({item}) =>{
                     tokenfirebase: user.mytokenFirebase,  //сам (виртуал) передаем токен для оповещения
                   })(dispatch);
                //////////////////////////////////////////////////////////////////
-      let probafe =  "test@i.ua"
+      let probafe =  e._id.toString()  // "test@i.ua"
       let subs ="отписался"
       let userid = user._id
       let username = user.name
@@ -166,11 +166,15 @@ renderItem = {({item}) =>{
                   })(dispatch);
 
               //////////////////////////////////////////////////////////////////
-     let probafe =  "test@i.ua"
+     let probafe = e._id.toString()   //"test@i.ua" это правильно
      let subs ="SUBSCRIBE"
      let userid = user._id
      let username = user.name
     // let iid = e._id 
+
+ 
+
+    
      await axios.put( `${URI}/subsc`,  {probafe, subs, userid, username },
         {  headers: { Authorization: `Bearer ${token}`, },   },
       );
